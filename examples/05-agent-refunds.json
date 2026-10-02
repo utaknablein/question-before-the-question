@@ -1,0 +1,46 @@
+{
+  "question": "Should our AI agents be allowed to approve refunds without a human?",
+  "needsReframe": true,
+  "restated": "Should AI agents approve customer refunds on their own, without human review?",
+  "trap": "Yes, below a set amount, with logging and a monthly audit.",
+  "misses": "The threshold quietly sets a policy nobody signed off. When the agent gets it wrong a thousand times, nobody knows who answers to customers, finance or regulators.",
+  "decision": {
+    "what": "What authority to delegate to AI agents, and who stays accountable for their decisions.",
+    "owner": "COO and CFO, with legal"
+  },
+  "premises": [
+    {
+      "text": "Accountability for agent decisions is already clear.",
+      "dependency": "High"
+    },
+    {
+      "text": "A monetary threshold is the right way to limit risk.",
+      "dependency": "Medium"
+    },
+    {
+      "text": "A monthly audit catches problems before they scale.",
+      "dependency": "Medium"
+    }
+  ],
+  "reframes": [
+    {
+      "shift": "Owner",
+      "question": "When the agent makes the wrong call, who answers for it, and do they know that today?",
+      "changes": "Names the accountable person before the first refund, not after the first incident."
+    },
+    {
+      "shift": "Timing",
+      "question": "How fast can we detect and reverse a pattern of wrong refunds?",
+      "changes": "An agent repeats a mistake at machine speed. The audit cycle has to match the error rate, not the calendar."
+    },
+    {
+      "shift": "Measure",
+      "question": "What error rate would make us withdraw the agent's authority, and who decides?",
+      "changes": "Sets the stop condition in advance, so the decision does not depend on who notices first."
+    }
+  ],
+  "first": {
+    "question": "When the agent makes the wrong call, who answers for it?",
+    "why": "Delegating a decision without naming its owner hands the accountability to nobody."
+  }
+}

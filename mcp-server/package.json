@@ -1,0 +1,19 @@
+{
+  "name": "vorfrage-mcp",
+  "version": "0.1.0",
+  "description": "Vorfrage MCP server: check whether you asked the right question before an AI answers it. Works as a ChatGPT app and a Claude connector.",
+  "type": "module",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "stdio": "node server.js --stdio",
+    "test": "node test.js"
+  },
+  "engines": { "node": ">=18" },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.31.0",
+    "express": "^5.2.1",
+    "zod": "^3.25.0"
+  },
+  "license": "MIT"
+}

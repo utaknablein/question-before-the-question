@@ -1,0 +1,46 @@
+{
+  "question": "Should we build our own AI search or buy a vendor?",
+  "needsReframe": true,
+  "restated": "Should the company build its own AI-powered search or license a vendor's search platform?",
+  "trap": "Buy. A vendor gives you better relevance out of the box, faster time to market and lower maintenance. Here is a cost comparison over three years.",
+  "misses": "The new engine indexes the same messy metadata and content structure. Results stay poor, and now you also have a multi-year contract.",
+  "decision": {
+    "what": "How to make search return what users are actually looking for, and where engineering capacity should go to get there.",
+    "owner": "CPO, with the CTO"
+  },
+  "premises": [
+    {
+      "text": "Search technology is what limits result quality.",
+      "dependency": "High"
+    },
+    {
+      "text": "Someone owns what a good result means for the business.",
+      "dependency": "High"
+    },
+    {
+      "text": "Build and buy are the only two options.",
+      "dependency": "Medium"
+    }
+  ],
+  "reframes": [
+    {
+      "shift": "Premise",
+      "question": "What evidence shows the search engine, rather than metadata, content structure or relevance signals, is what makes results poor?",
+      "changes": "If the data underneath is the problem, both options fail. The money buys the same bad results, faster."
+    },
+    {
+      "shift": "Owner",
+      "question": "Who owns what a good search result means: editorial, product, data or engineering?",
+      "changes": "Without an owner for relevance, no engine can be tuned, and the vendor choice becomes a proxy fight between teams."
+    },
+    {
+      "shift": "Measure",
+      "question": "Which searches fail today, for which users, and what number would tell us search is fixed?",
+      "changes": "Gives build and buy the same test to be judged against, instead of a feature comparison."
+    }
+  ],
+  "first": {
+    "question": "What evidence shows the search engine is the constraint?",
+    "why": "Build versus buy only matters if the engine is the problem. If it is metadata or ownership, both options fail."
+  }
+}

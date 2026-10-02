@@ -2,32 +2,61 @@
 
 **AI answers what you ask. The expensive mistake is asking the wrong question.**
 
-Large language models are optimized to be helpful on the question in front of them. In decision work, that is exactly the wrong behavior when the question itself is the mistake. A leader asks "What should we build next quarter to improve retention?" and gets a polished roadmap. Nobody checked whether churn is a product problem at all.
-
-Vorfrage is a pre-answer layer. Before the model answers, it checks the question.
+AI has removed much of the friction between a decision and its execution. That makes a badly framed decision more dangerous, not less. Vorfrage is a pre-answer layer: before the model answers, it checks the question.
 
 **[Try the demo](https://utaknablein.github.io/question-before-the-question/)**
 
-```
-Today:     Ask  ->  Answer
-Vorfrage:  Ask  ->  Check the question  ->  Answer
-```
+## What it does
+
+**The question**
+
+> Should we build our own AI search or buy a vendor?
+
+**The answer you would have gotten**
+
+> Buy. A vendor gives you better relevance out of the box, faster time to market and lower maintenance. Here is a cost comparison over three years.
+
+**What that answer misses**
+
+> The new engine indexes the same messy metadata and content structure. Results stay poor, and now you also have a multi-year contract.
+
+**The question before the question**
+
+> What evidence shows the search engine is the constraint, rather than metadata, content structure, or nobody owning what a good result means?
+
+That question changes what gets investigated before millions of dollars and engineering capacity are committed. Then the person chooses: answer the reframe, answer the original question as asked, or edit it. Vorfrage never blocks. It makes the choice visible.
 
 In German law, a *Vorfrage* is the preliminary question a court must settle before it can rule on the main one.
 
-## What it does
+## The larger idea: instrument judgment
 
-For any consequential question, Vorfrage returns:
+The prototype reframes questions. The larger idea is to instrument judgment.
 
-1. **The question as asked**, restated neutrally.
-2. **The decision behind it**, and who most likely owns that decision.
-3. **The premises** the question takes as true, each rated by how much a useful answer depends on it.
-4. **Three reframes**, each using one of seven shifts and each saying what answering it would change.
-5. **The question before the question**: the one to settle first, with a one-line reason.
+```
+Original question → assumptions → reframe → decision → outcome
+```
 
-Then the person chooses: a reframe, their original question, or an edit. Vorfrage never blocks. It makes the choice visible.
+Over time, that creates a record of where an organization repeatedly asks the wrong question, and which reframes actually improve decisions. Model providers see prompts. They do not see the decision that followed. That record is the asset, and it doubles as evidence of human oversight of AI-assisted decisions.
 
-## The seven shifts
+## Five decisions in the demo
+
+Each one has an answer that sounds right and walks past the real issue.
+
+| The question | What Vorfrage asks first |
+| --- | --- |
+| Should we build our own AI search or buy a vendor? | What evidence shows the search engine is the constraint? |
+| What feature should we launch to reduce churn? | Which customers are leaving, and are they the ones we want to keep? |
+| Should we replace part of our support team with AI agents? | Which of our contacts should not exist at all? |
+| Which AI initiative will generate the highest ROI? | What will count as return, by when, and who owns the number? |
+| Should our AI agents be allowed to approve refunds without a human? | When the agent makes the wrong call, who answers for it? |
+
+Full worked versions are in [examples/](examples/).
+
+## How it gets there
+
+Every check returns: the question restated, the answer you would have gotten and what it misses, the decision behind the question and who owns it, the premises it takes as true (rated by how much a useful answer depends on each), three reframes, and the one question to settle first.
+
+The reframes come from seven possible shifts:
 
 | Shift | The question it asks |
 | --- | --- |
@@ -41,40 +70,40 @@ Then the person chooses: a reframe, their original question, or an edit. Vorfrag
 
 The full method, including when *not* to reframe, is in [METHOD.md](METHOD.md).
 
-## The demo
+## Try it
 
-The page runs entirely in the browser and has three modes:
+The demo runs entirely in the browser:
 
-- **See examples.** Five questions leaders ask AI every week, each checked by Vorfrage. No key needed.
-- **Reframe it yourself.** A worksheet that walks you through the seven shifts with no AI at all. Useful in a workshop.
+- **See examples.** The five decisions above. No key needed.
+- **Reframe it yourself.** A worksheet that walks through the seven shifts with no AI at all. Useful in a workshop.
 - **Live with AI.** Paste your own Anthropic API key and check any question. The key goes straight from your browser to Anthropic and is never stored.
 
 The system prompt used in live mode is published in full at [prompts/vorfrage-system-prompt.md](prompts/vorfrage-system-prompt.md). Transparency about the instructions is part of the method.
 
-## Why this matters now
+## Use it inside ChatGPT or Claude
 
-- **Answers are now free; framing is not.** When any question gets a fluent answer in seconds, the scarce input moves upstream to the question.
+- **Custom GPT** (no code): [chatgpt/CUSTOM_GPT.md](chatgpt/CUSTOM_GPT.md) has everything to paste into the GPT builder.
+- **MCP server** (a ChatGPT app and a Claude connector): [mcp-server/](mcp-server/) is a one-tool server that needs no API key. It triages the question and hands the host model the framing to follow.
+
+## Why now
+
 - **Models detect bad premises but rarely redirect.** Research on real patient questions found models often fail to redirect a flawed question even when they detect the flawed premise ([MedRedFlag, 2026](https://arxiv.org/pdf/2601.09853)). Asking models to raise clarifying questions first improved answers substantially in another study ([Easy Problems that LLMs Get Wrong, 2024](https://arxiv.org/html/2405.19616v1)).
 - **Benchmarks stop at facts.** Current research tests false factual premises and missing details ([AskBench, 2026](https://arxiv.org/html/2602.11199)). The costly executive failure is a question that is factually fine and strategically mis-framed. That gap is not yet measured.
-
-## Where it goes next
-
-The demo shows the interaction. The product is a layer that sits in front of an organization's internal AI assistants for high-stakes questions, with a record of which reframes changed decisions. That record makes it possible to measure question quality over time, and it doubles as evidence of human oversight of AI-assisted decisions.
 
 ## Repository
 
 ```
 index.html                          The demo (GitHub Pages)
-METHOD.md                           The seven shifts, triage, and design principles
+METHOD.md                           The seven shifts, triage and design principles
 prompts/vorfrage-system-prompt.md   The exact prompt used in live mode
-examples/                           Worked examples in the JSON output format
+examples/                           The five demo decisions in the JSON output format
+chatgpt/                            Custom GPT configuration and icon
+mcp-server/                         MCP server for ChatGPT apps and Claude connectors
 ```
-
-To publish: Settings, then Pages, then deploy from the `main` branch root.
 
 ## About
 
-Built by [Uta Knablein](https://www.linkedin.com/in/utaknablein), former Chief Product Officer at iHeartMedia, named inventor on nine US patents, and advisor on AI operating models in the US and DACH. Part of a body of work on judgment in the AI era, alongside the [ENGINE AI maturity diagnostic](https://github.com/utaknablein/engine-diagnostic), the [product operating system](https://github.com/utaknablein/product-operating-system) and [agent workflows for leadership](https://github.com/utaknablein/agent-workflows).
+Built by [Uta Knablein](https://www.linkedin.com/in/utaknablein), former Chief Product Officer at iHeartMedia and WW. Part of a body of work on what happens to management when machines make execution cheap, alongside [ENGINE](https://github.com/utaknablein/engine-diagnostic), the [Product Operating System](https://github.com/utaknablein/product-operating-system), [Board Devil's Advocate](https://github.com/utaknablein/board-devils-advocate) and [Agent Workflows](https://github.com/utaknablein/agent-workflows).
 
 To run a *Question Before the Question* session with a leadership team, in English or German, reach out on [LinkedIn](https://www.linkedin.com/in/utaknablein).
 

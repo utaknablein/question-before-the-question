@@ -78,6 +78,10 @@ ul.prem li{display:flex;gap:12px;align-items:flex-start}
 .shift{display:inline-block;font-size:12px;font-weight:600;color:var(--accent);background:var(--accent-soft);padding:2px 8px;border-radius:6px;margin-bottom:8px}
 .rf .q{font-weight:600;margin-bottom:4px}
 .rf .c{color:var(--muted);font-size:15px;margin:0}
+.trap{border-style:dashed;background:transparent;box-shadow:none;color:var(--muted)}
+.trap div:last-child{font-style:italic}
+.miss{background:var(--warn-soft);border-color:transparent;border-left:4px solid var(--warn)}
+.miss .label{color:var(--warn)}
 .first{border:2px solid var(--accent);background:var(--accent-soft)}
 .first .q{font-family:Fraunces,Georgia,serif;font-size:21px;line-height:1.35;margin-bottom:8px}
 .choice{font-size:14px;color:var(--muted)}
@@ -88,18 +92,6 @@ ul.prem li{display:flex;gap:12px;align-items:flex-start}
 .guided-step{display:grid;gap:8px;margin-bottom:16px}
 .guided-step .sq{font-weight:600}
 .guided-step .sh{font-size:12px;font-weight:600;color:var(--accent);letter-spacing:.06em;text-transform:uppercase}
-.guided-step .help{font-size:13px;color:var(--muted);margin:0}
-.decision-step{padding-bottom:16px;margin-bottom:20px;border-bottom:1px solid var(--line)}
-.grf{border:1px solid var(--line);border-radius:10px;padding:16px;background:var(--surface);display:grid;gap:10px}
-.grf.used{border-color:var(--accent);box-shadow:inset 0 0 0 1px var(--accent)}
-.grf .note{color:var(--muted);font-size:14px;margin:0}
-.grf .acts{display:flex;gap:12px;flex-wrap:wrap;align-items:center}
-.grf .acts label{display:flex;gap:6px;align-items:center;font-weight:400;font-size:14px;margin:0;cursor:pointer}
-.btn.sm{padding:8px 12px;font-size:14px}
-.first .empty{color:var(--muted)}
-details.how{margin-top:24px}
-details.how summary{cursor:pointer;font-weight:600;color:var(--accent);font-size:15px}
-details.how[open] summary{margin-bottom:12px}
 .err{color:var(--hi);font-size:14px;margin-top:8px}
 section.block{margin-top:56px}
 footer{margin-top:64px;padding-top:24px;border-top:1px solid var(--line);font-size:14px;color:var(--muted)}
@@ -118,12 +110,6 @@ footer a{color:var(--accent)}
   </div>
   <p class="hint">In German law, a <em>Vorfrage</em> is the preliminary question a court must settle before it can rule on the main one.</p>
 
-  <details class="how">
-    <summary>How it works: the seven shifts</summary>
-    <p style="color:var(--muted);max-width:640px">Every reframe moves the question in one of seven directions. In Live with AI, Vorfrage picks the three that change it most. In Reframe it yourself, you answer the shifts and choose.</p>
-    <div class="shifts" id="shiftCards"></div>
-  </details>
-
   <div class="tabs" role="tablist">
     <button class="tab" role="tab" id="t-ex" aria-controls="p-ex" aria-selected="true">See examples</button>
     <button class="tab" role="tab" id="t-guided" aria-controls="p-guided" aria-selected="false">Reframe it yourself</button>
@@ -132,23 +118,18 @@ footer a{color:var(--accent)}
 
   <!-- Examples -->
   <div class="panel" id="p-ex" role="tabpanel" aria-labelledby="t-ex">
-    <p class="hint" style="margin-bottom:12px">Five questions leaders ask AI every week. Pick one.</p>
+    <p class="hint" style="margin-bottom:12px">Five decisions leaders bring to AI every week. Each one has an answer that sounds right. Pick one.</p>
     <div class="chips" id="exChips"></div>
     <div id="exOut"></div>
   </div>
 
   <!-- Guided -->
   <div class="panel" id="p-guided" role="tabpanel" aria-labelledby="t-guided" hidden>
-    <p class="hint" style="margin-bottom:12px">No AI in this mode. Nothing leaves your browser.</p>
     <div class="card">
       <label for="gq">Your question</label>
       <textarea id="gq" placeholder="The question you were about to ask AI, or your team"></textarea>
-      <div class="guided-step decision-step" style="margin-top:16px">
-        <label class="sq" for="g-decision">The decision this answer feeds is ...</label>
-        <input type="text" id="g-decision" placeholder="For example: where to cut cost next quarter">
-      </div>
-      <p class="hint">Finish each sentence below in a few words. Skip any that do not apply.</p>
-      <div id="gSteps" style="margin-top:12px"></div>
+      <p class="hint" style="margin-top:8px">No AI in this mode. Answer the seven shifts yourself; skip any that do not apply. Nothing leaves your browser.</p>
+      <div id="gSteps" style="margin-top:20px"></div>
       <div class="row"><button class="btn" id="gGo">Build my reframes</button></div>
     </div>
     <div id="gOut"></div>
@@ -171,6 +152,12 @@ footer a{color:var(--accent)}
   </div>
 
   <section class="block">
+    <h2>The seven shifts</h2>
+    <p style="color:var(--muted);max-width:640px">Every reframe moves the question in one of seven directions. Vorfrage picks the three that change it most.</p>
+    <div class="shifts" id="shiftCards"></div>
+  </section>
+
+  <section class="block">
     <h2>Why this matters now</h2>
     <p style="max-width:680px">AI made answers nearly free. That moves the scarce input upstream, to the question. Models can often detect a flawed premise and still answer anyway, because answering is what they are rewarded for. Vorfrage makes the check a visible step, keeps the person in charge of the choice, and records which reframes change decisions.</p>
   </section>
@@ -183,95 +170,105 @@ footer a{color:var(--accent)}
 
 <script>
 const SHIFTS = {
-  Upstream:{q:"What goal is this question serving, and is there a better route to it?",s:"What I'm ultimately after is ...",e:"higher profitability"},
-  Premise:{q:"What must be true for this question to make sense?",s:"I'm assuming that ...",e:"margins have room to move"},
-  Scope:{q:"Is this too narrow, or too broad, to act on?",s:"A version we could act on this month is ...",e:"the margin on our two weakest product lines"},
-  Owner:{q:"Whose question is this, and are they the one asking?",s:"The person who really owns this is ...",e:"the CFO"},
-  Timing:{q:"Why now, and what changes if it waits?",s:"The urgency comes from ...",e:"the board meeting in November"},
-  Measure:{q:"What would count as a good answer, and who decides?",s:"I'll know it worked when ...",e:"gross margin is up two points by Q2"},
-  Inversion:{q:"What should we stop, or what would make the opposite true?",s:"Something we could stop doing is ...",e:"discounting to hit quarter-end targets"}
+  Upstream:{q:"What goal is this question serving, and is there a better route to it?",p:"What are you ultimately trying to achieve with the answer?"},
+  Premise:{q:"What must be true for this question to make sense?",p:"What are you assuming is true that you have not checked?"},
+  Scope:{q:"Is this too narrow, or too broad, to act on?",p:"Is this the right size? What would a smaller or larger version be?"},
+  Owner:{q:"Whose question is this, and are they the one asking?",p:"Who actually owns this decision, and would they ask it the same way?"},
+  Timing:{q:"Why now, and what changes if it waits?",p:"Where does the urgency come from, and what would waiting cost?"},
+  Measure:{q:"What would count as a good answer, and who decides?",p:"How will you know the answer worked?"},
+  Inversion:{q:"What should we stop, or what would make the opposite true?",p:"What would you stop doing, or what if the opposite were true?"}
 };
 
 const EXAMPLES = [
 {
-  label:"What should we build next quarter to improve retention?",
-  restated:"Which features should the product team build next quarter to raise customer retention?",
-  decision:{what:"Where to invest next quarter's product capacity to reduce churn.",owner:"CPO, with the CEO"},
+  label:"Should we build our own AI search or buy a vendor?",
+  restated:"Should the company build its own AI-powered search or license a vendor's search platform?",
+  trap:"Buy. A vendor gives you better relevance out of the box, faster time to market and lower maintenance. Here is a cost comparison over three years.",
+  misses:"The new engine indexes the same messy metadata and content structure. Results stay poor, and now you also have a multi-year contract.",
+  decision:{what:"How to make search return what users are actually looking for, and where engineering capacity should go to get there.",owner:"CPO, with the CTO"},
   premises:[
-    {text:"Churn is caused by missing product capability.",dependency:"High"},
-    {text:"The customers who leave are the customers you want to keep.",dependency:"High"},
-    {text:"A quarter of building is the right unit of response.",dependency:"Medium"}
+    {text:"Search technology is what limits result quality.",dependency:"High"},
+    {text:"Someone owns what a good result means for the business.",dependency:"High"},
+    {text:"Build and buy are the only two options.",dependency:"Medium"}
   ],
   reframes:[
-    {shift:"Premise",question:"Which customers are leaving, and what did they say or do in their last 30 days?",changes:"Tests whether this is a product problem at all. Churn often traces to onboarding, pricing or the wrong customers."},
-    {shift:"Inversion",question:"What could we stop doing next quarter that currently drives people away?",changes:"Subtracting a confusing flow or a bad price change is often faster and cheaper than adding features."},
-    {shift:"Measure",question:"Which retention number are we moving, for which segment, and by how much would count as success?",changes:"Forces a target the roadmap can be judged against, instead of a list that feels productive."}
+    {shift:"Premise",question:"What evidence shows the search engine, rather than metadata, content structure or relevance signals, is what makes results poor?",changes:"If the data underneath is the problem, both options fail. The money buys the same bad results, faster."},
+    {shift:"Owner",question:"Who owns what a good search result means: editorial, product, data or engineering?",changes:"Without an owner for relevance, no engine can be tuned, and the vendor choice becomes a proxy fight between teams."},
+    {shift:"Measure",question:"Which searches fail today, for which users, and what number would tell us search is fixed?",changes:"Gives build and buy the same test to be judged against, instead of a feature comparison."}
   ],
-  first:{question:"Which customers are leaving, and why?",why:"Every feature on the list is a bet on an answer to this question that nobody has checked."}
+  first:{question:"What evidence shows the search engine is the constraint?",why:"Build versus buy only matters if the engine is the problem. If it is metadata or ownership, both options fail."}
 },
 {
-  label:"Which AI vendor should we choose for our customer service chatbot?",
-  restated:"Which vendor should supply the AI chatbot for customer service?",
-  decision:{what:"How to handle rising customer service demand, and whether automation is the right lever.",owner:"COO or Head of Customer Experience"},
+  label:"What feature should we launch to reduce churn?",
+  restated:"Which new feature should the product team launch to lower customer churn?",
+  trap:"Personalized onboarding and a win-back offer. Here are five features ranked by expected impact on retention.",
+  misses:"The people leaving may be the customers your last price change or acquisition campaign brought in. A feature that keeps them keeps customers you never wanted, and the real cause stays untouched.",
+  decision:{what:"Where to invest to keep the customers the business is built for.",owner:"CPO, with the CMO and CFO"},
   premises:[
-    {text:"A chatbot is the right answer to the service problem.",dependency:"High"},
-    {text:"The main difference between options is the vendor.",dependency:"Medium"},
-    {text:"Customers want to self-serve for these requests.",dependency:"High"}
+    {text:"Churn is caused by something missing in the product.",dependency:"High"},
+    {text:"The customers leaving are the customers worth keeping.",dependency:"High"},
+    {text:"One launch can move a churn number that has several causes.",dependency:"Medium"}
   ],
   reframes:[
-    {shift:"Upstream",question:"What are the top five reasons customers contact us, and which ones should not need contact at all?",changes:"May reveal that fixing two broken processes removes more volume than any chatbot deflects."},
-    {shift:"Measure",question:"What would a successful service experience look like to the customer, and to the P&L?",changes:"Separates cost-per-contact from customer outcome, which a vendor comparison quietly merges."},
-    {shift:"Owner",question:"Who is accountable when the bot gives a wrong answer to a customer?",changes:"Surfaces the governance and escalation design, which decides success more than vendor choice."}
+    {shift:"Scope",question:"Which customers are leaving, at what point in their life with us, and are they the ones we want to keep?",changes:"Splits one churn number into segments. Often only one segment matters, and its cause is not a feature."},
+    {shift:"Premise",question:"What did leaving customers do, or stop doing, in their last 30 days?",changes:"Behavior before leaving points to onboarding, pricing, value or service, before anyone names a feature."},
+    {shift:"Inversion",question:"What could we remove or fix that is pushing good customers away?",changes:"Subtraction is often faster than a launch: a confusing flow, a surprise fee, a promise marketing made that the product does not keep."}
   ],
-  first:{question:"Why are customers contacting us in the first place?",why:"Choosing a vendor locks in the assumption that the contacts should exist."}
+  first:{question:"Which customers are leaving, and are they the ones we want to keep?",why:"Every feature on the list is a bet on an answer to this question that nobody has checked."}
 },
 {
-  label:"How do I get my team to adopt AI faster?",
-  restated:"How can the leader increase the speed at which the team adopts AI tools?",
-  decision:{what:"Which work should change, and how, now that AI is available.",owner:"The team leader"},
+  label:"Should we replace part of our support team with AI agents?",
+  restated:"Should the company replace some customer support staff with AI agents?",
+  trap:"Yes. Start with routine tier-one tickets, keep people for escalations, and track deflection and cost per contact.",
+  misses:"Many contacts exist because something upstream is broken, like billing errors or unclear policies. Automating them answers the failure faster. And you cut the people who know exactly where the product breaks.",
+  decision:{what:"How to lower the cost and raise the quality of customer service.",owner:"COO or Head of Customer Experience"},
   premises:[
-    {text:"Faster adoption produces better outcomes.",dependency:"High"},
-    {text:"The team is the bottleneck, not the workflow or the incentives.",dependency:"High"},
-    {text:"Adoption can be measured by usage.",dependency:"Medium"}
+    {text:"Contact volume is a fixed fact, not a symptom.",dependency:"High"},
+    {text:"Support's only job is answering contacts.",dependency:"High"},
+    {text:"Cost per contact is the right measure of success.",dependency:"Medium"}
   ],
   reframes:[
-    {shift:"Scope",question:"Which two or three workflows would change the most if AI were used well, and what does good look like in each?",changes:"Moves from a vague adoption push to specific redesigned work that people can see and copy."},
-    {shift:"Premise",question:"What is making it rational for my team not to use AI today?",changes:"Often reveals unclear permissions, fear of being judged, or time pressure, which training alone does not fix."},
-    {shift:"Measure",question:"What outcome should improve because of AI, and how will we know it did?",changes:"Keeps the goal on better work, not higher usage figures that look good in a dashboard."}
+    {shift:"Upstream",question:"Why are customers contacting us at all, and which of those contacts should not exist?",changes:"Fixing two or three broken processes may remove more volume than any agent deflects, at lower risk."},
+    {shift:"Premise",question:"What does our support team know about where the product fails, and who acts on it today?",changes:"Treats support as a sensor. Cutting it without capturing that knowledge removes your early warning system."},
+    {shift:"Owner",question:"When an agent gives a customer a wrong answer, who is accountable?",changes:"Forces the escalation and governance design before launch, which decides success more than the vendor does."}
   ],
-  first:{question:"What is making it rational for my team not to use AI today?",why:"Speed is the wrong lever if the obstacle is permission, trust or incentives."}
+  first:{question:"Which of our contacts should not exist at all?",why:"Automating a contact that should not exist makes a failure cheaper to repeat."}
 },
 {
-  label:"Should we hire a Chief AI Officer?",
-  restated:"Should the company create and hire a Chief AI Officer role?",
-  decision:{what:"Who owns AI decisions and outcomes in the operating model.",owner:"CEO, with the board"},
+  label:"Which AI initiative will generate the highest ROI?",
+  restated:"Which of the proposed AI initiatives will produce the highest return on investment?",
+  trap:"Support automation, usually, followed by sales enablement. Here is a scoring matrix of expected savings against effort.",
+  misses:"Each ROI figure is an estimate written by the person who wants the project. The ranking rewards whoever wrote the most optimistic case, and nobody owns the number after launch.",
+  decision:{what:"How to allocate a limited AI budget and team across competing initiatives.",owner:"CEO, with the CFO"},
   premises:[
-    {text:"AI needs a single owner rather than being owned by each business leader.",dependency:"High"},
-    {text:"The gap is a missing person, not missing decision rights.",dependency:"High"},
-    {text:"The role would have budget and authority.",dependency:"Medium"}
+    {text:"The ROI estimates are reliable enough to rank.",dependency:"High"},
+    {text:"Someone will measure the return after launch.",dependency:"High"},
+    {text:"The initiatives do not compete for the same people.",dependency:"Medium"}
   ],
   reframes:[
-    {shift:"Owner",question:"Which AI decisions are being made today, by whom, and which ones are falling between chairs?",changes:"Maps the real gap. It may be a decision-rights problem that a new title will not solve."},
-    {shift:"Upstream",question:"What should be true about how we use AI in 24 months, and what structure gets us there?",changes:"Starts from the outcome. A CAIO is one of several structures, alongside a CPO or COO mandate."},
-    {shift:"Timing",question:"What breaks if we do not decide this for another six months?",changes:"Separates real urgency from pressure created by peers announcing similar hires."}
+    {shift:"Measure",question:"What will count as return, by when, and who owns the number after launch?",changes:"Turns sponsor estimates into commitments. Initiatives whose sponsors will not own a number drop out on their own."},
+    {shift:"Inversion",question:"Which current initiatives should we stop so that any of these can succeed?",changes:"Capacity, not ideas, is usually the constraint. Ranking more work without removing work spreads the team thinner."},
+    {shift:"Upstream",question:"Which business problem would we spend this money on if AI did not exist?",changes:"Separates real problems from AI-shaped projects, and points the budget at outcomes."}
   ],
-  first:{question:"Which AI decisions are falling between chairs today?",why:"A new executive fixes an ownership gap only if you know which gap it is."}
+  first:{question:"What will count as return, by when, and who owns the number?",why:"A ranking of estimates nobody will be held to is a ranking of optimism."}
 },
 {
-  label:"How can we cut 15% from the marketing budget?",
-  restated:"Where can the company remove 15% of marketing spend?",
-  decision:{what:"How to improve return on growth spend under a cost target.",owner:"CMO, with the CFO"},
+  label:"Should our AI agents be allowed to approve refunds without a human?",
+  restated:"Should AI agents approve customer refunds on their own, without human review?",
+  trap:"Yes, below a set amount, with logging and a monthly audit.",
+  misses:"The threshold quietly sets a policy nobody signed off. When the agent gets it wrong a thousand times, nobody knows who answers to customers, finance or regulators.",
+  decision:{what:"What authority to delegate to AI agents, and who stays accountable for their decisions.",owner:"COO and CFO, with legal"},
   premises:[
-    {text:"The 15% target is fixed and applies to marketing specifically.",dependency:"Medium"},
-    {text:"All marketing spend returns roughly the same.",dependency:"High"},
-    {text:"Cutting spend will not reduce revenue proportionally.",dependency:"High"}
+    {text:"Accountability for agent decisions is already clear.",dependency:"High"},
+    {text:"A monetary threshold is the right way to limit risk.",dependency:"Medium"},
+    {text:"A monthly audit catches problems before they scale.",dependency:"Medium"}
   ],
   reframes:[
-    {shift:"Measure",question:"Which 15% of our marketing spend produces the least revenue, and how confident are we in that measurement?",changes:"Turns a flat cut into a targeted one, and exposes whether attribution is good enough to cut with confidence."},
-    {shift:"Inversion",question:"Where would moving money from weak channels to strong ones grow revenue at the same total cost?",changes:"The CFO's real goal may be profit, which reallocation can serve better than reduction."},
-    {shift:"Upstream",question:"What problem is the 15% target meant to solve, and is marketing the best place to solve it?",changes:"Checks whether the target was set top-down without a view of where cost and return actually sit."}
+    {shift:"Owner",question:"When the agent makes the wrong call, who answers for it, and do they know that today?",changes:"Names the accountable person before the first refund, not after the first incident."},
+    {shift:"Timing",question:"How fast can we detect and reverse a pattern of wrong refunds?",changes:"An agent repeats a mistake at machine speed. The audit cycle has to match the error rate, not the calendar."},
+    {shift:"Measure",question:"What error rate would make us withdraw the agent's authority, and who decides?",changes:"Sets the stop condition in advance, so the decision does not depend on who notices first."}
   ],
-  first:{question:"What is the 15% target meant to solve?",why:"If the goal is margin, reallocation may beat reduction, and the question changes shape."}
+  first:{question:"When the agent makes the wrong call, who answers for it?",why:"Delegating a decision without naming its owner hands the accountability to nobody."}
 }
 ];
 
@@ -286,6 +283,8 @@ function render(r, target){
   const noNeed = r.needsReframe === false;
   el.innerHTML = `<div class="result">
     <div class="card"><div class="label">You asked</div><div class="asked">${esc(r.restated)}</div></div>
+    ${r.trap ? `<div class="card trap"><div class="label">The answer you would have gotten</div><div>${esc(r.trap)}</div></div>` : ""}
+    ${r.misses ? `<div class="card miss"><div class="label">What that answer misses</div><div>${esc(r.misses)}</div></div>` : ""}
     <div class="card decision"><div><div class="label">The decision behind it</div><div>${esc(r.decision?.what)}</div></div><div class="owner">Owner: ${esc(r.decision?.owner)}</div></div>
     ${prem ? `<div class="card"><div class="label">What the question takes as true</div><ul class="prem">${prem}</ul><p class="hint" style="margin:12px 0 0">Rating shows how much a useful answer depends on it.</p></div>` : ""}
     ${noNeed ? "" : `<div><div class="label">Three reframes</div><div class="reframes">${rfs}</div></div>`}
@@ -316,110 +315,30 @@ render(EXAMPLES[0], "#exOut");
 $("#shiftCards").innerHTML = Object.entries(SHIFTS).map(([k,v]) => `<div class="card"><h3>${k}</h3><p>${esc(v.q)}</p></div>`).join("");
 
 /* Guided */
-$("#gSteps").innerHTML = Object.entries(SHIFTS).map(([k,v]) => `<div class="guided-step"><span class="sh">${k}</span><label class="sq" for="g-${k}">${esc(v.s)}</label><p class="help">${esc(v.q)}</p><input type="text" id="g-${k}" data-shift="${k}" placeholder="${esc("For example: " + v.e)}"></div>`).join("");
-
-const TEMPLATES = {
-  Upstream: n => `Is this question the best route to ${n}?`,
-  Premise: n => `How do we know that ${n}? What would we see if it were not true?`,
-  Scope: n => `Could we start with ${n} instead?`,
-  Owner: n => `How would ${n} ask this question?`,
-  Timing: n => `Is ${n} a real deadline, and what would waiting cost?`,
-  Measure: n => `What would we have to do so that ${n}?`,
-  Inversion: n => `What happens if we stop ${n}?`
-};
-/* Leading words people often type that the template already supplies */
-const LEADS = {
-  Upstream: [/^what i'?m ultimately after is\s*/i, /^i'?m (ultimately )?(trying to|after)\s*/i, /^(to )?(achieve|get)\s+/i],
-  Premise: [/^i'?m assuming( that)?\s*/i, /^i am assuming( that)?\s*/i, /^that\s+/i],
-  Scope: [/^a version we could act on this month is\s*/i],
-  Owner: [/^the person who really owns this is\s*/i],
-  Timing: [/^the urgency comes from\s*/i],
-  Measure: [/^i'?ll know it worked when\s*/i],
-  Inversion: [/^something we could stop doing is\s*/i, /^stop(ping)?\s+/i, /^we (could )?stop\s+/i]
-};
-function clean(shift, raw){
-  let n = raw.trim().replace(/[’]/g,"'").replace(/[.?!,;:]+$/,"").trim();
-  (LEADS[shift]||[]).forEach(re => { n = n.replace(re, ""); });
-  n = n.trim();
-  /* Lowercase the first letter unless it looks like a name or acronym (CFO, Q2, I) */
-  if(n && /^[A-Z][a-z]/.test(n) && !/^I\b/.test(n)) n = n[0].toLowerCase() + n.slice(1);
-  return n;
-}
-const MAX_SHORTLIST = 3;
-/* Fewest words an answer needs before it can be turned into a question */
-const MIN_WORDS = {Upstream:2, Owner:1, Timing:2};
-
+$("#gSteps").innerHTML = Object.entries(SHIFTS).map(([k,v]) => `<div class="guided-step"><span class="sh">${k}</span><label class="sq" for="g-${k}">${esc(v.p)}</label><input type="text" id="g-${k}" data-shift="${k}"></div>`).join("");
 $("#gGo").addEventListener("click", () => {
   const q = $("#gq").value.trim();
   if(!q){ $("#gq").focus(); return; }
   const filled = [...document.querySelectorAll("#gSteps input")].filter(i => i.value.trim()).map(i => ({shift:i.dataset.shift, note:i.value.trim()}));
-  if(!filled.length){ $("#gOut").innerHTML = `<p class="err">Finish at least one sentence to build a reframe.</p>`; return; }
-  const decision = $("#g-decision").value.trim().replace(/[.]+$/,"");
-  const ownerEntry = filled.find(f => f.shift === "Owner");
-  const owner = ownerEntry ? ownerEntry.note.trim().replace(/^the person who really owns this is\s*/i,"").replace(/[.?!]+$/,"") : "";
-  const reframes = filled.map(f => {
-    const n = clean(f.shift, f.note);
-    const words = n.split(/\s+/).filter(Boolean).length;
-    const short = words < (MIN_WORDS[f.shift] || 3);
-    return {shift:f.shift, note:f.note, question: short ? "" : TEMPLATES[f.shift](n), short};
-  });
-  renderGuided({q, decision, owner, reframes});
-});
-
-function renderGuided(r){
-  const el = $("#gOut");
-  const many = r.reframes.length > MAX_SHORTLIST;
-  const cards = r.reframes.map((f,i) => `<div class="grf" data-i="${i}">
-      <span class="shift" style="justify-self:start;margin:0">${esc(f.shift)}</span>
-      <input type="text" class="rq" aria-label="${esc(f.shift)} reframe" value="${esc(f.question)}" placeholder="Turn this into a question you would actually ask">
-      <p class="note">${f.short ? `Your answer "${esc(f.note.replace(/[.?!]+$/,""))}" was too short to build a question from. Write it as one above.` : `Built from your answer "${esc(f.note.replace(/[.?!]+$/,""))}". Edit the wording until it sounds like you.`}</p>
-      <div class="acts">
-        <button class="btn sm use" type="button">Use this one</button>
-        ${many ? `<label><input type="checkbox" class="sl"> Shortlist</label>` : ""}
-      </div>
-    </div>`).join("");
-  el.innerHTML = `<div class="result">
-    <div class="card"><div class="label">You asked</div><div class="asked">${esc(r.q)}</div></div>
-    ${(r.decision || r.owner) ? `<div class="card decision"><div><div class="label">The decision behind it</div><div>${r.decision ? esc(r.decision) : `<span class="hint">Not named. Naming it often changes which reframe matters.</span>`}</div></div>${r.owner ? `<div class="owner">Owner: ${esc(r.owner)}</div>` : ""}</div>` : ""}
-    <div>
-      <div class="label">Your reframes</div>
-      ${many ? `<p class="hint" style="margin:0 0 10px">You answered ${r.reframes.length} shifts. Shortlist the three that change the question most (<span class="slc">0</span> of ${MAX_SHORTLIST}).</p>` : ""}
-      <div class="reframes">${cards}</div>
-    </div>
-    <div class="card first"><div class="label">The question before the question</div><div class="q chosen"><span class="empty">Not chosen yet. Pick "Use this one" on the reframe you want to ask first.</span></div></div>
-    <div class="row" style="margin-top:0"><button class="btn ghost sm orig" type="button">Answer the original as asked</button></div>
-    <p class="choice" aria-live="polite">Your choice: <strong class="pick">none yet</strong></p>
-  </div>`;
-
-  const setChoice = (text, card) => {
-    el.querySelectorAll(".grf").forEach(x => x.classList.toggle("used", x === card));
-    el.querySelector(".chosen").textContent = text;
-    el.querySelector(".pick").textContent = card ? text : "the original question, as asked";
+  if(!filled.length){ $("#gOut").innerHTML = `<p class="err">Answer at least one shift to build a reframe.</p>`; return; }
+  const templates = {
+    Upstream: n => `What is the best route to ${n}?`,
+    Premise: n => `Is it actually true that ${n}? What would we see if it were not?`,
+    Scope: n => `${n}: what is the version of this we could act on this month?`,
+    Owner: n => `How would ${n} frame this decision?`,
+    Timing: n => `What changes if we decide this later, given that ${n}?`,
+    Measure: n => `What would make us confident that ${n}?`,
+    Inversion: n => `What happens if we ${n}?`
   };
-  el.querySelectorAll(".grf").forEach(card => {
-    const input = card.querySelector(".rq");
-    card.querySelector(".use").addEventListener("click", () => {
-      const text = input.value.trim();
-      if(!text){ input.focus(); return; }
-      setChoice(text, card);
-    });
-    /* Keep the chosen question in sync if it is edited after picking */
-    input.addEventListener("input", () => { if(card.classList.contains("used") && input.value.trim()) setChoice(input.value.trim(), card); });
-  });
-  el.querySelector(".orig").addEventListener("click", () => setChoice(r.q, null));
-
-  if(many){
-    const boxes = [...el.querySelectorAll(".sl")];
-    boxes.forEach(b => b.addEventListener("change", () => {
-      const n = boxes.filter(x => x.checked).length;
-      el.querySelector(".slc").textContent = n;
-      boxes.forEach(x => { if(!x.checked) x.disabled = n >= MAX_SHORTLIST; });
-      /* Move shortlisted reframes to the top */
-      const list = el.querySelector(".reframes");
-      boxes.filter(x => x.checked).reverse().forEach(x => list.prepend(x.closest(".grf")));
-    }));
-  }
-}
+  const reframes = filled.slice(0,3).map(f => ({shift:f.shift, question:templates[f.shift](f.note.replace(/[.?!]+$/,"")), changes:`Your ${f.shift.toLowerCase()} answer: "${f.note}". Edit the wording until it is a question you would actually ask.`}));
+  render({
+    restated:q,
+    decision:{what:"Name the decision this question serves before you ask it.", owner:"You decide"},
+    premises:[],
+    reframes,
+    first:{question:reframes[0].question, why:filled.length > 3 ? "You answered more than three shifts; the first three are shown. Reorder by filling the most important first." : "Your first answered shift leads. Compare it against the original before you ask either."}
+  }, "#gOut");
+});
 
 /* Live */
 let SYSTEM = null;

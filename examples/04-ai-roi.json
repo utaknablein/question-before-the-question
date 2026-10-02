@@ -1,0 +1,46 @@
+{
+  "question": "Which AI initiative will generate the highest ROI?",
+  "needsReframe": true,
+  "restated": "Which of the proposed AI initiatives will produce the highest return on investment?",
+  "trap": "Support automation, usually, followed by sales enablement. Here is a scoring matrix of expected savings against effort.",
+  "misses": "Each ROI figure is an estimate written by the person who wants the project. The ranking rewards whoever wrote the most optimistic case, and nobody owns the number after launch.",
+  "decision": {
+    "what": "How to allocate a limited AI budget and team across competing initiatives.",
+    "owner": "CEO, with the CFO"
+  },
+  "premises": [
+    {
+      "text": "The ROI estimates are reliable enough to rank.",
+      "dependency": "High"
+    },
+    {
+      "text": "Someone will measure the return after launch.",
+      "dependency": "High"
+    },
+    {
+      "text": "The initiatives do not compete for the same people.",
+      "dependency": "Medium"
+    }
+  ],
+  "reframes": [
+    {
+      "shift": "Measure",
+      "question": "What will count as return, by when, and who owns the number after launch?",
+      "changes": "Turns sponsor estimates into commitments. Initiatives whose sponsors will not own a number drop out on their own."
+    },
+    {
+      "shift": "Inversion",
+      "question": "Which current initiatives should we stop so that any of these can succeed?",
+      "changes": "Capacity, not ideas, is usually the constraint. Ranking more work without removing work spreads the team thinner."
+    },
+    {
+      "shift": "Upstream",
+      "question": "Which business problem would we spend this money on if AI did not exist?",
+      "changes": "Separates real problems from AI-shaped projects, and points the budget at outcomes."
+    }
+  ],
+  "first": {
+    "question": "What will count as return, by when, and who owns the number?",
+    "why": "A ranking of estimates nobody will be held to is a ranking of optimism."
+  }
+}

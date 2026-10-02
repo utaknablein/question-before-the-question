@@ -1,0 +1,46 @@
+{
+  "question": "What feature should we launch to reduce churn?",
+  "needsReframe": true,
+  "restated": "Which new feature should the product team launch to lower customer churn?",
+  "trap": "Personalized onboarding and a win-back offer. Here are five features ranked by expected impact on retention.",
+  "misses": "The people leaving may be the customers your last price change or acquisition campaign brought in. A feature that keeps them keeps customers you never wanted, and the real cause stays untouched.",
+  "decision": {
+    "what": "Where to invest to keep the customers the business is built for.",
+    "owner": "CPO, with the CMO and CFO"
+  },
+  "premises": [
+    {
+      "text": "Churn is caused by something missing in the product.",
+      "dependency": "High"
+    },
+    {
+      "text": "The customers leaving are the customers worth keeping.",
+      "dependency": "High"
+    },
+    {
+      "text": "One launch can move a churn number that has several causes.",
+      "dependency": "Medium"
+    }
+  ],
+  "reframes": [
+    {
+      "shift": "Scope",
+      "question": "Which customers are leaving, at what point in their life with us, and are they the ones we want to keep?",
+      "changes": "Splits one churn number into segments. Often only one segment matters, and its cause is not a feature."
+    },
+    {
+      "shift": "Premise",
+      "question": "What did leaving customers do, or stop doing, in their last 30 days?",
+      "changes": "Behavior before leaving points to onboarding, pricing, value or service, before anyone names a feature."
+    },
+    {
+      "shift": "Inversion",
+      "question": "What could we remove or fix that is pushing good customers away?",
+      "changes": "Subtraction is often faster than a launch: a confusing flow, a surprise fee, a promise marketing made that the product does not keep."
+    }
+  ],
+  "first": {
+    "question": "Which customers are leaving, and are they the ones we want to keep?",
+    "why": "Every feature on the list is a bet on an answer to this question that nobody has checked."
+  }
+}

@@ -1,0 +1,46 @@
+{
+  "question": "Should we replace part of our support team with AI agents?",
+  "needsReframe": true,
+  "restated": "Should the company replace some customer support staff with AI agents?",
+  "trap": "Yes. Start with routine tier-one tickets, keep people for escalations, and track deflection and cost per contact.",
+  "misses": "Many contacts exist because something upstream is broken, like billing errors or unclear policies. Automating them answers the failure faster. And you cut the people who know exactly where the product breaks.",
+  "decision": {
+    "what": "How to lower the cost and raise the quality of customer service.",
+    "owner": "COO or Head of Customer Experience"
+  },
+  "premises": [
+    {
+      "text": "Contact volume is a fixed fact, not a symptom.",
+      "dependency": "High"
+    },
+    {
+      "text": "Support's only job is answering contacts.",
+      "dependency": "High"
+    },
+    {
+      "text": "Cost per contact is the right measure of success.",
+      "dependency": "Medium"
+    }
+  ],
+  "reframes": [
+    {
+      "shift": "Upstream",
+      "question": "Why are customers contacting us at all, and which of those contacts should not exist?",
+      "changes": "Fixing two or three broken processes may remove more volume than any agent deflects, at lower risk."
+    },
+    {
+      "shift": "Premise",
+      "question": "What does our support team know about where the product fails, and who acts on it today?",
+      "changes": "Treats support as a sensor. Cutting it without capturing that knowledge removes your early warning system."
+    },
+    {
+      "shift": "Owner",
+      "question": "When an agent gives a customer a wrong answer, who is accountable?",
+      "changes": "Forces the escalation and governance design before launch, which decides success more than the vendor does."
+    }
+  ],
+  "first": {
+    "question": "Which of our contacts should not exist at all?",
+    "why": "Automating a contact that should not exist makes a failure cheaper to repeat."
+  }
+}
