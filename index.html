@@ -85,6 +85,9 @@ ul.prem li{display:flex;gap:12px;align-items:flex-start}
 .first{border:2px solid var(--accent);background:var(--accent-soft)}
 .first .q{font-family:Fraunces,Georgia,serif;font-size:21px;line-height:1.35;margin-bottom:8px}
 .choice{font-size:14px;color:var(--muted)}
+.fb{box-shadow:none}
+.fbb[aria-pressed="true"]{border-color:var(--accent);color:var(--accent);opacity:1}
+.fbb:disabled{cursor:default}
 .choice strong{color:var(--ink)}
 .shifts{display:grid;gap:12px;grid-template-columns:repeat(auto-fit,minmax(240px,1fr))}
 .shifts .card h3{margin-bottom:6px}
@@ -164,7 +167,7 @@ footer a{color:var(--accent)}
 
   <footer>
     Built by <a href="https://www.linkedin.com/in/utaknablein">Uta Knablein</a>. Part of a body of work on judgment in the AI era, alongside <a href="https://utaknablein.github.io/engine-diagnostic/">ENGINE</a>.
-    Everything on this page runs in your browser. Nothing is stored.
+    Everything on this page runs in your browser. Your questions are never stored or sent anywhere except, in live mode, to Anthropic. Anonymous click counts only, no cookies.
   </footer>
 </main>
 
@@ -272,6 +275,8 @@ const EXAMPLES = [
 }
 ];
 
+// Count key actions as events in GoatCounter (no cookies, no personal data, never question text)
+function gcEvent(name) { try { window.goatcounter && window.goatcounter.count({ path: name, title: name, event: true }); } catch (e) {} }
 const $ = s => document.querySelector(s);
 const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
 
@@ -289,12 +294,27 @@ function render(r, target){
     ${prem ? `<div class="card"><div class="label">What the question takes as true</div><ul class="prem">${prem}</ul><p class="hint" style="margin:12px 0 0">Rating shows how much a useful answer depends on it.</p></div>` : ""}
     ${noNeed ? "" : `<div><div class="label">Three reframes</div><div class="reframes">${rfs}</div></div>`}
     <div class="card first"><div class="label">${noNeed ? "Verdict" : "The question before the question"}</div>${noNeed ? "" : `<div class="q">${esc(r.first?.question)}</div>`}<div>${esc(r.first?.why)}</div></div>
+    ${noNeed ? "" : `<div class="row"><button class="btn ghost orig">Answer my original question instead</button></div>`}
     <p class="choice" aria-live="polite">Your choice: <strong class="pick">${noNeed ? "the question is well framed, answer it as asked" : "none yet. Pick a reframe above, or answer the original as asked."}</strong></p>
+    ${noNeed ? "" : `<div class="card fb"><div class="label">Would this have changed what you did?</div><div class="row" style="margin-top:4px"><button class="btn ghost fbb" data-v="yes">Yes</button><button class="btn ghost fbb" data-v="maybe">Maybe</button><button class="btn ghost fbb" data-v="no">No</button></div><p class="hint fbt" style="margin:10px 0 0">One tap. Anonymous. Only the answer is counted, never your question.</p></div>`}
   </div>`;
+  const mode = target === "#exOut" ? "ex" : target === "#gOut" ? "guided" : "live";
   el.querySelectorAll(".rf").forEach(b => b.addEventListener("click", () => {
     el.querySelectorAll(".rf").forEach(x => x.setAttribute("aria-pressed","false"));
     b.setAttribute("aria-pressed","true");
     el.querySelector(".pick").textContent = r.reframes[+b.dataset.i].question;
+    gcEvent(`vf-${mode}-pick-reframe-${String(r.reframes[+b.dataset.i].shift||"").toLowerCase()}`);
+  }));
+  const orig = el.querySelector(".orig");
+  if (orig) orig.addEventListener("click", () => {
+    el.querySelectorAll(".rf").forEach(x => x.setAttribute("aria-pressed","false"));
+    el.querySelector(".pick").textContent = "your original question, as asked";
+    gcEvent(`vf-${mode}-pick-original`);
+  });
+  el.querySelectorAll(".fbb").forEach(b => b.addEventListener("click", () => {
+    el.querySelectorAll(".fbb").forEach(x => { x.disabled = true; x.setAttribute("aria-pressed", x===b ? "true" : "false"); });
+    el.querySelector(".fbt").textContent = "Thank you. That helps.";
+    gcEvent(`vf-${mode}-changed-${b.dataset.v}`);
   }));
 }
 
@@ -305,7 +325,7 @@ EXAMPLES.forEach((ex,i) => {
   b.className = "chip"; b.textContent = ex.label; b.setAttribute("aria-pressed", i===0 ? "true":"false");
   b.addEventListener("click", () => {
     exChips.querySelectorAll(".chip").forEach(c => c.setAttribute("aria-pressed","false"));
-    b.setAttribute("aria-pressed","true"); render(ex, "#exOut");
+    b.setAttribute("aria-pressed","true"); render(ex, "#exOut"); gcEvent(`vf-example-${i+1}`);
   });
   exChips.appendChild(b);
 });
@@ -338,6 +358,7 @@ $("#gGo").addEventListener("click", () => {
     reframes,
     first:{question:reframes[0].question, why:filled.length > 3 ? "You answered more than three shifts; the first three are shown. Reorder by filling the most important first." : "Your first answered shift leads. Compare it against the original before you ask either."}
   }, "#gOut");
+  gcEvent("vf-guided-built");
 });
 
 /* Live */
@@ -368,8 +389,10 @@ $("#lGo").addEventListener("click", async () => {
     const text = (data.content||[]).filter(c => c.type==="text").map(c => c.text).join("");
     const json = JSON.parse(text.slice(text.indexOf("{"), text.lastIndexOf("}")+1));
     render(json, "#lOut");
+    gcEvent(json.needsReframe === false ? "vf-live-well-framed" : "vf-live-checked");
   }catch(e){
     $("#lErr").textContent = e.message || "Something went wrong.";
+    gcEvent("vf-live-error");
   }finally{
     $("#lGo").disabled = false; $("#lStatus").textContent = "";
   }
@@ -377,8 +400,10 @@ $("#lGo").addEventListener("click", async () => {
 
 /* Tabs */
 document.querySelectorAll(".tab").forEach(t => t.addEventListener("click", () => {
+  gcEvent("vf-tab-" + t.id.replace("t-",""));
   document.querySelectorAll(".tab").forEach(x => { x.setAttribute("aria-selected", x===t ? "true":"false"); $("#"+x.getAttribute("aria-controls")).hidden = x!==t; });
 }));
 </script>
+<script data-goatcounter="https://utaknablein.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
 </body>
 </html>
