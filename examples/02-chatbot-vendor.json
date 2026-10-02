@@ -1,0 +1,44 @@
+{
+  "question": "Which AI vendor should we choose for our customer service chatbot?",
+  "needsReframe": true,
+  "restated": "Which vendor should supply the AI chatbot for customer service?",
+  "decision": {
+    "what": "How to handle rising customer service demand, and whether automation is the right lever.",
+    "owner": "COO or Head of Customer Experience"
+  },
+  "premises": [
+    {
+      "text": "A chatbot is the right answer to the service problem.",
+      "dependency": "High"
+    },
+    {
+      "text": "The main difference between options is the vendor.",
+      "dependency": "Medium"
+    },
+    {
+      "text": "Customers want to self-serve for these requests.",
+      "dependency": "High"
+    }
+  ],
+  "reframes": [
+    {
+      "shift": "Upstream",
+      "question": "What are the top five reasons customers contact us, and which ones should not need contact at all?",
+      "changes": "May reveal that fixing two broken processes removes more volume than any chatbot deflects."
+    },
+    {
+      "shift": "Measure",
+      "question": "What would a successful service experience look like to the customer, and to the P&L?",
+      "changes": "Separates cost-per-contact from customer outcome, which a vendor comparison quietly merges."
+    },
+    {
+      "shift": "Owner",
+      "question": "Who is accountable when the bot gives a wrong answer to a customer?",
+      "changes": "Surfaces the governance and escalation design, which decides success more than vendor choice."
+    }
+  ],
+  "first": {
+    "question": "Why are customers contacting us in the first place?",
+    "why": "Choosing a vendor locks in the assumption that the contacts should exist."
+  }
+}

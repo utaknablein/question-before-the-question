@@ -1,0 +1,368 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Vorfrage: The Question Before the Question</title>
+<meta name="description" content="A pre-answer layer for AI: before the model answers, check whether you asked the right question.">
+<meta property="og:title" content="Vorfrage: The Question Before the Question">
+<meta property="og:description" content="AI answers what you ask. Vorfrage checks whether you asked the right question first.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#f7f5f0; --surface:#ffffff; --ink:#1d1c1a; --muted:#6b675f; --line:#e4dfd4;
+  --accent:#2f5d50; --accent-soft:#e3ece8; --warn:#9a5b13; --warn-soft:#f6ecdd; --hi:#8c2f2f; --hi-soft:#f5e3e1;
+  --radius:12px; --shadow:0 1px 2px rgba(0,0,0,.04),0 4px 16px rgba(0,0,0,.04);
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#161614; --surface:#1f1f1c; --ink:#ecebe6; --muted:#a39f95; --line:#34322d;
+    --accent:#8cc4b2; --accent-soft:#233430; --warn:#e0a860; --warn-soft:#3a2d1c; --hi:#e79a93; --hi-soft:#3b2322;
+    --shadow:none;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#161614; --surface:#1f1f1c; --ink:#ecebe6; --muted:#a39f95; --line:#34322d;
+  --accent:#8cc4b2; --accent-soft:#233430; --warn:#e0a860; --warn-soft:#3a2d1c; --hi:#e79a93; --hi-soft:#3b2322;
+  --shadow:none;
+}
+*{box-sizing:border-box}
+html,body{margin:0}
+body{background:var(--bg);color:var(--ink);font:16px/1.55 Inter,system-ui,sans-serif;-webkit-font-smoothing:antialiased}
+.wrap{max-width:880px;margin:0 auto;padding:40px 16px 80px}
+h1,h2,h3{font-family:Fraunces,Georgia,serif;font-weight:600;line-height:1.2;margin:0}
+h1{font-size:clamp(30px,5vw,44px);letter-spacing:-.01em}
+h2{font-size:24px;margin-bottom:12px}
+h3{font-size:18px}
+p{margin:0 0 12px}
+.eyebrow{font-size:13px;letter-spacing:.08em;text-transform:uppercase;color:var(--accent);font-weight:600;margin-bottom:12px}
+.lede{font-size:19px;color:var(--muted);max-width:640px;margin:16px 0 0}
+.flow{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin:28px 0 8px;font-size:14px}
+.flow span{padding:6px 12px;border-radius:999px;border:1px solid var(--line);background:var(--surface)}
+.flow .new{border-color:var(--accent);background:var(--accent-soft);color:var(--accent);font-weight:600}
+.flow i{color:var(--muted);font-style:normal}
+.tabs{display:flex;gap:4px;margin:40px 0 0;border-bottom:1px solid var(--line);flex-wrap:wrap}
+.tab{appearance:none;border:0;background:none;padding:12px 16px;font:500 15px Inter,sans-serif;color:var(--muted);cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-1px}
+.tab[aria-selected="true"]{color:var(--ink);border-bottom-color:var(--accent)}
+.panel{padding-top:24px}
+.panel[hidden]{display:none}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:20px;box-shadow:var(--shadow)}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:20px}
+.chip{appearance:none;border:1px solid var(--line);background:var(--surface);color:var(--ink);border-radius:999px;padding:8px 14px;font:14px Inter,sans-serif;cursor:pointer;text-align:left}
+.chip[aria-pressed="true"]{border-color:var(--accent);background:var(--accent-soft);color:var(--accent);font-weight:500}
+label{display:block;font-weight:500;font-size:14px;margin-bottom:6px}
+textarea,input[type=text],input[type=password]{width:100%;font:16px/1.5 Inter,sans-serif;color:var(--ink);background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:12px 14px}
+textarea{min-height:88px;resize:vertical}
+textarea:focus,input:focus{outline:2px solid var(--accent);outline-offset:1px;border-color:transparent}
+.btn{appearance:none;border:0;border-radius:10px;padding:12px 18px;font:600 15px Inter,sans-serif;cursor:pointer;background:var(--accent);color:var(--bg)}
+.btn.ghost{background:transparent;color:var(--ink);border:1px solid var(--line)}
+.btn:disabled{opacity:.5;cursor:default}
+.row{display:flex;gap:12px;flex-wrap:wrap;align-items:center;margin-top:12px}
+.hint{font-size:13px;color:var(--muted)}
+.result{margin-top:24px;display:grid;gap:16px}
+.asked{font-family:Fraunces,Georgia,serif;font-size:21px;line-height:1.35}
+.label{font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);font-weight:600;margin-bottom:6px}
+.decision{display:grid;grid-template-columns:1fr auto;gap:12px;align-items:start}
+.owner{font-size:13px;padding:4px 10px;border-radius:999px;background:var(--bg);border:1px solid var(--line);white-space:nowrap}
+ul.prem{list-style:none;margin:0;padding:0;display:grid;gap:8px}
+ul.prem li{display:flex;gap:12px;align-items:flex-start}
+.dep{flex:none;font-size:12px;font-weight:600;padding:2px 8px;border-radius:6px;margin-top:2px;min-width:64px;text-align:center}
+.dep.High{background:var(--hi-soft);color:var(--hi)}
+.dep.Medium{background:var(--warn-soft);color:var(--warn)}
+.dep.Low{background:var(--bg);color:var(--muted);border:1px solid var(--line)}
+.reframes{display:grid;gap:12px}
+.rf{border:1px solid var(--line);border-radius:10px;padding:16px;background:var(--surface);cursor:pointer;text-align:left;font:inherit;color:inherit;width:100%}
+.rf:hover{border-color:var(--accent)}
+.rf[aria-pressed="true"]{border-color:var(--accent);box-shadow:inset 0 0 0 1px var(--accent)}
+.shift{display:inline-block;font-size:12px;font-weight:600;color:var(--accent);background:var(--accent-soft);padding:2px 8px;border-radius:6px;margin-bottom:8px}
+.rf .q{font-weight:600;margin-bottom:4px}
+.rf .c{color:var(--muted);font-size:15px;margin:0}
+.first{border:2px solid var(--accent);background:var(--accent-soft)}
+.first .q{font-family:Fraunces,Georgia,serif;font-size:21px;line-height:1.35;margin-bottom:8px}
+.choice{font-size:14px;color:var(--muted)}
+.choice strong{color:var(--ink)}
+.shifts{display:grid;gap:12px;grid-template-columns:repeat(auto-fit,minmax(240px,1fr))}
+.shifts .card h3{margin-bottom:6px}
+.shifts .card p{color:var(--muted);font-size:15px;margin:0}
+.guided-step{display:grid;gap:8px;margin-bottom:16px}
+.guided-step .sq{font-weight:600}
+.guided-step .sh{font-size:12px;font-weight:600;color:var(--accent);letter-spacing:.06em;text-transform:uppercase}
+.err{color:var(--hi);font-size:14px;margin-top:8px}
+section.block{margin-top:56px}
+footer{margin-top:64px;padding-top:24px;border-top:1px solid var(--line);font-size:14px;color:var(--muted)}
+footer a{color:var(--accent)}
+.sr{position:absolute;left:-9999px}
+@media (max-width:560px){.decision{grid-template-columns:1fr}.wrap{padding-top:28px}}
+</style>
+</head>
+<body>
+<main class="wrap">
+  <div class="eyebrow">Vorfrage</div>
+  <h1>The Question Before the Question</h1>
+  <p class="lede">AI is built to answer what you ask. The expensive mistake is rarely a wrong answer. It is a fluent answer to the wrong question. Vorfrage checks the question first.</p>
+  <div class="flow" aria-label="Interaction model">
+    <span>Ask</span><i>then</i><span class="new">Check the question</span><i>then</i><span>Answer</span>
+  </div>
+  <p class="hint">In German law, a <em>Vorfrage</em> is the preliminary question a court must settle before it can rule on the main one.</p>
+
+  <div class="tabs" role="tablist">
+    <button class="tab" role="tab" id="t-ex" aria-controls="p-ex" aria-selected="true">See examples</button>
+    <button class="tab" role="tab" id="t-guided" aria-controls="p-guided" aria-selected="false">Reframe it yourself</button>
+    <button class="tab" role="tab" id="t-live" aria-controls="p-live" aria-selected="false">Live with AI</button>
+  </div>
+
+  <!-- Examples -->
+  <div class="panel" id="p-ex" role="tabpanel" aria-labelledby="t-ex">
+    <p class="hint" style="margin-bottom:12px">Five questions leaders ask AI every week. Pick one.</p>
+    <div class="chips" id="exChips"></div>
+    <div id="exOut"></div>
+  </div>
+
+  <!-- Guided -->
+  <div class="panel" id="p-guided" role="tabpanel" aria-labelledby="t-guided" hidden>
+    <div class="card">
+      <label for="gq">Your question</label>
+      <textarea id="gq" placeholder="The question you were about to ask AI, or your team"></textarea>
+      <p class="hint" style="margin-top:8px">No AI in this mode. Answer the seven shifts yourself; skip any that do not apply. Nothing leaves your browser.</p>
+      <div id="gSteps" style="margin-top:20px"></div>
+      <div class="row"><button class="btn" id="gGo">Build my reframes</button></div>
+    </div>
+    <div id="gOut"></div>
+  </div>
+
+  <!-- Live -->
+  <div class="panel" id="p-live" role="tabpanel" aria-labelledby="t-live" hidden>
+    <div class="card">
+      <label for="lq">Your question</label>
+      <textarea id="lq" placeholder="For example: How do we get our managers to use AI more?"></textarea>
+      <div style="display:grid;gap:12px;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));margin-top:16px">
+        <div><label for="lk">Anthropic API key</label><input type="password" id="lk" autocomplete="off" placeholder="sk-ant-..."></div>
+        <div><label for="lm">Model</label><input type="text" id="lm" value="claude-sonnet-5-5"></div>
+      </div>
+      <p class="hint" style="margin-top:8px">Your key goes straight from this page to Anthropic and is never stored. The full system prompt is <a href="prompts/vorfrage-system-prompt.md" style="color:var(--accent)">published in the repo</a>.</p>
+      <div class="row"><button class="btn" id="lGo">Check my question</button><span class="hint" id="lStatus"></span></div>
+      <div class="err" id="lErr"></div>
+    </div>
+    <div id="lOut"></div>
+  </div>
+
+  <section class="block">
+    <h2>The seven shifts</h2>
+    <p style="color:var(--muted);max-width:640px">Every reframe moves the question in one of seven directions. Vorfrage picks the three that change it most.</p>
+    <div class="shifts" id="shiftCards"></div>
+  </section>
+
+  <section class="block">
+    <h2>Why this matters now</h2>
+    <p style="max-width:680px">AI made answers nearly free. That moves the scarce input upstream, to the question. Models can often detect a flawed premise and still answer anyway, because answering is what they are rewarded for. Vorfrage makes the check a visible step, keeps the person in charge of the choice, and records which reframes change decisions.</p>
+  </section>
+
+  <footer>
+    Built by <a href="https://www.linkedin.com/in/utaknablein">Uta Knablein</a>. Part of a body of work on judgment in the AI era, alongside <a href="https://utaknablein.github.io/engine-diagnostic/">ENGINE</a>.
+    Everything on this page runs in your browser. Nothing is stored.
+  </footer>
+</main>
+
+<script>
+const SHIFTS = {
+  Upstream:{q:"What goal is this question serving, and is there a better route to it?",p:"What are you ultimately trying to achieve with the answer?"},
+  Premise:{q:"What must be true for this question to make sense?",p:"What are you assuming is true that you have not checked?"},
+  Scope:{q:"Is this too narrow, or too broad, to act on?",p:"Is this the right size? What would a smaller or larger version be?"},
+  Owner:{q:"Whose question is this, and are they the one asking?",p:"Who actually owns this decision, and would they ask it the same way?"},
+  Timing:{q:"Why now, and what changes if it waits?",p:"Where does the urgency come from, and what would waiting cost?"},
+  Measure:{q:"What would count as a good answer, and who decides?",p:"How will you know the answer worked?"},
+  Inversion:{q:"What should we stop, or what would make the opposite true?",p:"What would you stop doing, or what if the opposite were true?"}
+};
+
+const EXAMPLES = [
+{
+  label:"What should we build next quarter to improve retention?",
+  restated:"Which features should the product team build next quarter to raise customer retention?",
+  decision:{what:"Where to invest next quarter's product capacity to reduce churn.",owner:"CPO, with the CEO"},
+  premises:[
+    {text:"Churn is caused by missing product capability.",dependency:"High"},
+    {text:"The customers who leave are the customers you want to keep.",dependency:"High"},
+    {text:"A quarter of building is the right unit of response.",dependency:"Medium"}
+  ],
+  reframes:[
+    {shift:"Premise",question:"Which customers are leaving, and what did they say or do in their last 30 days?",changes:"Tests whether this is a product problem at all. Churn often traces to onboarding, pricing or the wrong customers."},
+    {shift:"Inversion",question:"What could we stop doing next quarter that currently drives people away?",changes:"Subtracting a confusing flow or a bad price change is often faster and cheaper than adding features."},
+    {shift:"Measure",question:"Which retention number are we moving, for which segment, and by how much would count as success?",changes:"Forces a target the roadmap can be judged against, instead of a list that feels productive."}
+  ],
+  first:{question:"Which customers are leaving, and why?",why:"Every feature on the list is a bet on an answer to this question that nobody has checked."}
+},
+{
+  label:"Which AI vendor should we choose for our customer service chatbot?",
+  restated:"Which vendor should supply the AI chatbot for customer service?",
+  decision:{what:"How to handle rising customer service demand, and whether automation is the right lever.",owner:"COO or Head of Customer Experience"},
+  premises:[
+    {text:"A chatbot is the right answer to the service problem.",dependency:"High"},
+    {text:"The main difference between options is the vendor.",dependency:"Medium"},
+    {text:"Customers want to self-serve for these requests.",dependency:"High"}
+  ],
+  reframes:[
+    {shift:"Upstream",question:"What are the top five reasons customers contact us, and which ones should not need contact at all?",changes:"May reveal that fixing two broken processes removes more volume than any chatbot deflects."},
+    {shift:"Measure",question:"What would a successful service experience look like to the customer, and to the P&L?",changes:"Separates cost-per-contact from customer outcome, which a vendor comparison quietly merges."},
+    {shift:"Owner",question:"Who is accountable when the bot gives a wrong answer to a customer?",changes:"Surfaces the governance and escalation design, which decides success more than vendor choice."}
+  ],
+  first:{question:"Why are customers contacting us in the first place?",why:"Choosing a vendor locks in the assumption that the contacts should exist."}
+},
+{
+  label:"How do I get my team to adopt AI faster?",
+  restated:"How can the leader increase the speed at which the team adopts AI tools?",
+  decision:{what:"Which work should change, and how, now that AI is available.",owner:"The team leader"},
+  premises:[
+    {text:"Faster adoption produces better outcomes.",dependency:"High"},
+    {text:"The team is the bottleneck, not the workflow or the incentives.",dependency:"High"},
+    {text:"Adoption can be measured by usage.",dependency:"Medium"}
+  ],
+  reframes:[
+    {shift:"Scope",question:"Which two or three workflows would change the most if AI were used well, and what does good look like in each?",changes:"Moves from a vague adoption push to specific redesigned work that people can see and copy."},
+    {shift:"Premise",question:"What is making it rational for my team not to use AI today?",changes:"Often reveals unclear permissions, fear of being judged, or time pressure, which training alone does not fix."},
+    {shift:"Measure",question:"What outcome should improve because of AI, and how will we know it did?",changes:"Keeps the goal on better work, not higher usage figures that look good in a dashboard."}
+  ],
+  first:{question:"What is making it rational for my team not to use AI today?",why:"Speed is the wrong lever if the obstacle is permission, trust or incentives."}
+},
+{
+  label:"Should we hire a Chief AI Officer?",
+  restated:"Should the company create and hire a Chief AI Officer role?",
+  decision:{what:"Who owns AI decisions and outcomes in the operating model.",owner:"CEO, with the board"},
+  premises:[
+    {text:"AI needs a single owner rather than being owned by each business leader.",dependency:"High"},
+    {text:"The gap is a missing person, not missing decision rights.",dependency:"High"},
+    {text:"The role would have budget and authority.",dependency:"Medium"}
+  ],
+  reframes:[
+    {shift:"Owner",question:"Which AI decisions are being made today, by whom, and which ones are falling between chairs?",changes:"Maps the real gap. It may be a decision-rights problem that a new title will not solve."},
+    {shift:"Upstream",question:"What should be true about how we use AI in 24 months, and what structure gets us there?",changes:"Starts from the outcome. A CAIO is one of several structures, alongside a CPO or COO mandate."},
+    {shift:"Timing",question:"What breaks if we do not decide this for another six months?",changes:"Separates real urgency from pressure created by peers announcing similar hires."}
+  ],
+  first:{question:"Which AI decisions are falling between chairs today?",why:"A new executive fixes an ownership gap only if you know which gap it is."}
+},
+{
+  label:"How can we cut 15% from the marketing budget?",
+  restated:"Where can the company remove 15% of marketing spend?",
+  decision:{what:"How to improve return on growth spend under a cost target.",owner:"CMO, with the CFO"},
+  premises:[
+    {text:"The 15% target is fixed and applies to marketing specifically.",dependency:"Medium"},
+    {text:"All marketing spend returns roughly the same.",dependency:"High"},
+    {text:"Cutting spend will not reduce revenue proportionally.",dependency:"High"}
+  ],
+  reframes:[
+    {shift:"Measure",question:"Which 15% of our marketing spend produces the least revenue, and how confident are we in that measurement?",changes:"Turns a flat cut into a targeted one, and exposes whether attribution is good enough to cut with confidence."},
+    {shift:"Inversion",question:"Where would moving money from weak channels to strong ones grow revenue at the same total cost?",changes:"The CFO's real goal may be profit, which reallocation can serve better than reduction."},
+    {shift:"Upstream",question:"What problem is the 15% target meant to solve, and is marketing the best place to solve it?",changes:"Checks whether the target was set top-down without a view of where cost and return actually sit."}
+  ],
+  first:{question:"What is the 15% target meant to solve?",why:"If the goal is margin, reallocation may beat reduction, and the question changes shape."}
+}
+];
+
+const $ = s => document.querySelector(s);
+const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+
+function render(r, target){
+  const el = $(target);
+  if(!r){ el.innerHTML = ""; return; }
+  const prem = (r.premises||[]).map(p => `<li><span class="dep ${esc(p.dependency)}">${esc(p.dependency)}</span><span>${esc(p.text)}</span></li>`).join("");
+  const rfs = (r.reframes||[]).map((f,i) => `<button class="rf" data-i="${i}" aria-pressed="false"><span class="shift">${esc(f.shift)}</span><div class="q">${esc(f.question)}</div><p class="c">${esc(f.changes)}</p></button>`).join("");
+  const noNeed = r.needsReframe === false;
+  el.innerHTML = `<div class="result">
+    <div class="card"><div class="label">You asked</div><div class="asked">${esc(r.restated)}</div></div>
+    <div class="card decision"><div><div class="label">The decision behind it</div><div>${esc(r.decision?.what)}</div></div><div class="owner">Owner: ${esc(r.decision?.owner)}</div></div>
+    ${prem ? `<div class="card"><div class="label">What the question takes as true</div><ul class="prem">${prem}</ul><p class="hint" style="margin:12px 0 0">Rating shows how much a useful answer depends on it.</p></div>` : ""}
+    ${noNeed ? "" : `<div><div class="label">Three reframes</div><div class="reframes">${rfs}</div></div>`}
+    <div class="card first"><div class="label">${noNeed ? "Verdict" : "The question before the question"}</div>${noNeed ? "" : `<div class="q">${esc(r.first?.question)}</div>`}<div>${esc(r.first?.why)}</div></div>
+    <p class="choice" aria-live="polite">Your choice: <strong class="pick">${noNeed ? "the question is well framed, answer it as asked" : "none yet. Pick a reframe above, or answer the original as asked."}</strong></p>
+  </div>`;
+  el.querySelectorAll(".rf").forEach(b => b.addEventListener("click", () => {
+    el.querySelectorAll(".rf").forEach(x => x.setAttribute("aria-pressed","false"));
+    b.setAttribute("aria-pressed","true");
+    el.querySelector(".pick").textContent = r.reframes[+b.dataset.i].question;
+  }));
+}
+
+/* Examples */
+const exChips = $("#exChips");
+EXAMPLES.forEach((ex,i) => {
+  const b = document.createElement("button");
+  b.className = "chip"; b.textContent = ex.label; b.setAttribute("aria-pressed", i===0 ? "true":"false");
+  b.addEventListener("click", () => {
+    exChips.querySelectorAll(".chip").forEach(c => c.setAttribute("aria-pressed","false"));
+    b.setAttribute("aria-pressed","true"); render(ex, "#exOut");
+  });
+  exChips.appendChild(b);
+});
+render(EXAMPLES[0], "#exOut");
+
+/* Shift cards */
+$("#shiftCards").innerHTML = Object.entries(SHIFTS).map(([k,v]) => `<div class="card"><h3>${k}</h3><p>${esc(v.q)}</p></div>`).join("");
+
+/* Guided */
+$("#gSteps").innerHTML = Object.entries(SHIFTS).map(([k,v]) => `<div class="guided-step"><span class="sh">${k}</span><label class="sq" for="g-${k}">${esc(v.p)}</label><input type="text" id="g-${k}" data-shift="${k}"></div>`).join("");
+$("#gGo").addEventListener("click", () => {
+  const q = $("#gq").value.trim();
+  if(!q){ $("#gq").focus(); return; }
+  const filled = [...document.querySelectorAll("#gSteps input")].filter(i => i.value.trim()).map(i => ({shift:i.dataset.shift, note:i.value.trim()}));
+  if(!filled.length){ $("#gOut").innerHTML = `<p class="err">Answer at least one shift to build a reframe.</p>`; return; }
+  const templates = {
+    Upstream: n => `What is the best route to ${n}?`,
+    Premise: n => `Is it actually true that ${n}? What would we see if it were not?`,
+    Scope: n => `${n}: what is the version of this we could act on this month?`,
+    Owner: n => `How would ${n} frame this decision?`,
+    Timing: n => `What changes if we decide this later, given that ${n}?`,
+    Measure: n => `What would make us confident that ${n}?`,
+    Inversion: n => `What happens if we ${n}?`
+  };
+  const reframes = filled.slice(0,3).map(f => ({shift:f.shift, question:templates[f.shift](f.note.replace(/[.?!]+$/,"")), changes:`Your ${f.shift.toLowerCase()} answer: "${f.note}". Edit the wording until it is a question you would actually ask.`}));
+  render({
+    restated:q,
+    decision:{what:"Name the decision this question serves before you ask it.", owner:"You decide"},
+    premises:[],
+    reframes,
+    first:{question:reframes[0].question, why:filled.length > 3 ? "You answered more than three shifts; the first three are shown. Reorder by filling the most important first." : "Your first answered shift leads. Compare it against the original before you ask either."}
+  }, "#gOut");
+});
+
+/* Live */
+let SYSTEM = null;
+async function loadPrompt(){
+  if(SYSTEM) return SYSTEM;
+  const r = await fetch("prompts/vorfrage-system-prompt.md");
+  if(!r.ok) throw new Error("Could not load the system prompt file.");
+  const t = await r.text();
+  SYSTEM = t.split("\n---\n").slice(1).join("\n---\n").trim() || t;
+  return SYSTEM;
+}
+$("#lGo").addEventListener("click", async () => {
+  const q = $("#lq").value.trim(), key = $("#lk").value.trim(), model = $("#lm").value.trim() || "claude-sonnet-5-5";
+  $("#lErr").textContent = ""; $("#lOut").innerHTML = "";
+  if(!q){ $("#lErr").textContent = "Type a question first."; return; }
+  if(!key){ $("#lErr").textContent = "Add your Anthropic API key, or use the other two tabs, which need no key."; return; }
+  $("#lGo").disabled = true; $("#lStatus").textContent = "Checking the question...";
+  try{
+    const system = await loadPrompt();
+    const res = await fetch("https://api.anthropic.com/v1/messages", {
+      method:"POST",
+      headers:{"content-type":"application/json","x-api-key":key,"anthropic-version":"2023-06-01","anthropic-dangerous-direct-browser-access":"true"},
+      body:JSON.stringify({model, max_tokens:1500, system, messages:[{role:"user", content:`The question:\n\n${q}`}]})
+    });
+    const data = await res.json();
+    if(!res.ok) throw new Error(data?.error?.message || `Request failed (${res.status}).`);
+    const text = (data.content||[]).filter(c => c.type==="text").map(c => c.text).join("");
+    const json = JSON.parse(text.slice(text.indexOf("{"), text.lastIndexOf("}")+1));
+    render(json, "#lOut");
+  }catch(e){
+    $("#lErr").textContent = e.message || "Something went wrong.";
+  }finally{
+    $("#lGo").disabled = false; $("#lStatus").textContent = "";
+  }
+});
+
+/* Tabs */
+document.querySelectorAll(".tab").forEach(t => t.addEventListener("click", () => {
+  document.querySelectorAll(".tab").forEach(x => { x.setAttribute("aria-selected", x===t ? "true":"false"); $("#"+x.getAttribute("aria-controls")).hidden = x!==t; });
+}));
+</script>
+</body>
+</html>

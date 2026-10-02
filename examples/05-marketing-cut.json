@@ -1,0 +1,44 @@
+{
+  "question": "How can we cut 15% from the marketing budget?",
+  "needsReframe": true,
+  "restated": "Where can the company remove 15% of marketing spend?",
+  "decision": {
+    "what": "How to improve return on growth spend under a cost target.",
+    "owner": "CMO, with the CFO"
+  },
+  "premises": [
+    {
+      "text": "The 15% target is fixed and applies to marketing specifically.",
+      "dependency": "Medium"
+    },
+    {
+      "text": "All marketing spend returns roughly the same.",
+      "dependency": "High"
+    },
+    {
+      "text": "Cutting spend will not reduce revenue proportionally.",
+      "dependency": "High"
+    }
+  ],
+  "reframes": [
+    {
+      "shift": "Measure",
+      "question": "Which 15% of our marketing spend produces the least revenue, and how confident are we in that measurement?",
+      "changes": "Turns a flat cut into a targeted one, and exposes whether attribution is good enough to cut with confidence."
+    },
+    {
+      "shift": "Inversion",
+      "question": "Where would moving money from weak channels to strong ones grow revenue at the same total cost?",
+      "changes": "The CFO's real goal may be profit, which reallocation can serve better than reduction."
+    },
+    {
+      "shift": "Upstream",
+      "question": "What problem is the 15% target meant to solve, and is marketing the best place to solve it?",
+      "changes": "Checks whether the target was set top-down without a view of where cost and return actually sit."
+    }
+  ],
+  "first": {
+    "question": "What is the 15% target meant to solve?",
+    "why": "If the goal is margin, reallocation may beat reduction, and the question changes shape."
+  }
+}

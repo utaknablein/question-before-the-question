@@ -1,0 +1,44 @@
+{
+  "question": "What should we build next quarter to improve retention?",
+  "needsReframe": true,
+  "restated": "Which features should the product team build next quarter to raise customer retention?",
+  "decision": {
+    "what": "Where to invest next quarter's product capacity to reduce churn.",
+    "owner": "CPO, with the CEO"
+  },
+  "premises": [
+    {
+      "text": "Churn is caused by missing product capability.",
+      "dependency": "High"
+    },
+    {
+      "text": "The customers who leave are the customers you want to keep.",
+      "dependency": "High"
+    },
+    {
+      "text": "A quarter of building is the right unit of response.",
+      "dependency": "Medium"
+    }
+  ],
+  "reframes": [
+    {
+      "shift": "Premise",
+      "question": "Which customers are leaving, and what did they say or do in their last 30 days?",
+      "changes": "Tests whether this is a product problem at all. Churn often traces to onboarding, pricing or the wrong customers."
+    },
+    {
+      "shift": "Inversion",
+      "question": "What could we stop doing next quarter that currently drives people away?",
+      "changes": "Subtracting a confusing flow or a bad price change is often faster and cheaper than adding features."
+    },
+    {
+      "shift": "Measure",
+      "question": "Which retention number are we moving, for which segment, and by how much would count as success?",
+      "changes": "Forces a target the roadmap can be judged against, instead of a list that feels productive."
+    }
+  ],
+  "first": {
+    "question": "Which customers are leaving, and why?",
+    "why": "Every feature on the list is a bet on an answer to this question that nobody has checked."
+  }
+}

@@ -1,0 +1,44 @@
+{
+  "question": "Should we hire a Chief AI Officer?",
+  "needsReframe": true,
+  "restated": "Should the company create and hire a Chief AI Officer role?",
+  "decision": {
+    "what": "Who owns AI decisions and outcomes in the operating model.",
+    "owner": "CEO, with the board"
+  },
+  "premises": [
+    {
+      "text": "AI needs a single owner rather than being owned by each business leader.",
+      "dependency": "High"
+    },
+    {
+      "text": "The gap is a missing person, not missing decision rights.",
+      "dependency": "High"
+    },
+    {
+      "text": "The role would have budget and authority.",
+      "dependency": "Medium"
+    }
+  ],
+  "reframes": [
+    {
+      "shift": "Owner",
+      "question": "Which AI decisions are being made today, by whom, and which ones are falling between chairs?",
+      "changes": "Maps the real gap. It may be a decision-rights problem that a new title will not solve."
+    },
+    {
+      "shift": "Upstream",
+      "question": "What should be true about how we use AI in 24 months, and what structure gets us there?",
+      "changes": "Starts from the outcome. A CAIO is one of several structures, alongside a CPO or COO mandate."
+    },
+    {
+      "shift": "Timing",
+      "question": "What breaks if we do not decide this for another six months?",
+      "changes": "Separates real urgency from pressure created by peers announcing similar hires."
+    }
+  ],
+  "first": {
+    "question": "Which AI decisions are falling between chairs today?",
+    "why": "A new executive fixes an ownership gap only if you know which gap it is."
+  }
+}

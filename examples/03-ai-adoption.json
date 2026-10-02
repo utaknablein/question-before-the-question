@@ -1,0 +1,44 @@
+{
+  "question": "How do I get my team to adopt AI faster?",
+  "needsReframe": true,
+  "restated": "How can the leader increase the speed at which the team adopts AI tools?",
+  "decision": {
+    "what": "Which work should change, and how, now that AI is available.",
+    "owner": "The team leader"
+  },
+  "premises": [
+    {
+      "text": "Faster adoption produces better outcomes.",
+      "dependency": "High"
+    },
+    {
+      "text": "The team is the bottleneck, not the workflow or the incentives.",
+      "dependency": "High"
+    },
+    {
+      "text": "Adoption can be measured by usage.",
+      "dependency": "Medium"
+    }
+  ],
+  "reframes": [
+    {
+      "shift": "Scope",
+      "question": "Which two or three workflows would change the most if AI were used well, and what does good look like in each?",
+      "changes": "Moves from a vague adoption push to specific redesigned work that people can see and copy."
+    },
+    {
+      "shift": "Premise",
+      "question": "What is making it rational for my team not to use AI today?",
+      "changes": "Often reveals unclear permissions, fear of being judged, or time pressure, which training alone does not fix."
+    },
+    {
+      "shift": "Measure",
+      "question": "What outcome should improve because of AI, and how will we know it did?",
+      "changes": "Keeps the goal on better work, not higher usage figures that look good in a dashboard."
+    }
+  ],
+  "first": {
+    "question": "What is making it rational for my team not to use AI today?",
+    "why": "Speed is the wrong lever if the obstacle is permission, trust or incentives."
+  }
+}
