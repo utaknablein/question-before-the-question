@@ -88,6 +88,18 @@ ul.prem li{display:flex;gap:12px;align-items:flex-start}
 .guided-step{display:grid;gap:8px;margin-bottom:16px}
 .guided-step .sq{font-weight:600}
 .guided-step .sh{font-size:12px;font-weight:600;color:var(--accent);letter-spacing:.06em;text-transform:uppercase}
+.guided-step .help{font-size:13px;color:var(--muted);margin:0}
+.decision-step{padding-bottom:16px;margin-bottom:20px;border-bottom:1px solid var(--line)}
+.grf{border:1px solid var(--line);border-radius:10px;padding:16px;background:var(--surface);display:grid;gap:10px}
+.grf.used{border-color:var(--accent);box-shadow:inset 0 0 0 1px var(--accent)}
+.grf .note{color:var(--muted);font-size:14px;margin:0}
+.grf .acts{display:flex;gap:12px;flex-wrap:wrap;align-items:center}
+.grf .acts label{display:flex;gap:6px;align-items:center;font-weight:400;font-size:14px;margin:0;cursor:pointer}
+.btn.sm{padding:8px 12px;font-size:14px}
+.first .empty{color:var(--muted)}
+details.how{margin-top:24px}
+details.how summary{cursor:pointer;font-weight:600;color:var(--accent);font-size:15px}
+details.how[open] summary{margin-bottom:12px}
 .err{color:var(--hi);font-size:14px;margin-top:8px}
 section.block{margin-top:56px}
 footer{margin-top:64px;padding-top:24px;border-top:1px solid var(--line);font-size:14px;color:var(--muted)}
@@ -106,6 +118,12 @@ footer a{color:var(--accent)}
   </div>
   <p class="hint">In German law, a <em>Vorfrage</em> is the preliminary question a court must settle before it can rule on the main one.</p>
 
+  <details class="how">
+    <summary>How it works: the seven shifts</summary>
+    <p style="color:var(--muted);max-width:640px">Every reframe moves the question in one of seven directions. In Live with AI, Vorfrage picks the three that change it most. In Reframe it yourself, you answer the shifts and choose.</p>
+    <div class="shifts" id="shiftCards"></div>
+  </details>
+
   <div class="tabs" role="tablist">
     <button class="tab" role="tab" id="t-ex" aria-controls="p-ex" aria-selected="true">See examples</button>
     <button class="tab" role="tab" id="t-guided" aria-controls="p-guided" aria-selected="false">Reframe it yourself</button>
@@ -121,11 +139,16 @@ footer a{color:var(--accent)}
 
   <!-- Guided -->
   <div class="panel" id="p-guided" role="tabpanel" aria-labelledby="t-guided" hidden>
+    <p class="hint" style="margin-bottom:12px">No AI in this mode. Nothing leaves your browser.</p>
     <div class="card">
       <label for="gq">Your question</label>
       <textarea id="gq" placeholder="The question you were about to ask AI, or your team"></textarea>
-      <p class="hint" style="margin-top:8px">No AI in this mode. Answer the seven shifts yourself; skip any that do not apply. Nothing leaves your browser.</p>
-      <div id="gSteps" style="margin-top:20px"></div>
+      <div class="guided-step decision-step" style="margin-top:16px">
+        <label class="sq" for="g-decision">The decision this answer feeds is ...</label>
+        <input type="text" id="g-decision" placeholder="For example: where to cut cost next quarter">
+      </div>
+      <p class="hint">Finish each sentence below in a few words. Skip any that do not apply.</p>
+      <div id="gSteps" style="margin-top:12px"></div>
       <div class="row"><button class="btn" id="gGo">Build my reframes</button></div>
     </div>
     <div id="gOut"></div>
@@ -148,12 +171,6 @@ footer a{color:var(--accent)}
   </div>
 
   <section class="block">
-    <h2>The seven shifts</h2>
-    <p style="color:var(--muted);max-width:640px">Every reframe moves the question in one of seven directions. Vorfrage picks the three that change it most.</p>
-    <div class="shifts" id="shiftCards"></div>
-  </section>
-
-  <section class="block">
     <h2>Why this matters now</h2>
     <p style="max-width:680px">AI made answers nearly free. That moves the scarce input upstream, to the question. Models can often detect a flawed premise and still answer anyway, because answering is what they are rewarded for. Vorfrage makes the check a visible step, keeps the person in charge of the choice, and records which reframes change decisions.</p>
   </section>
@@ -166,13 +183,13 @@ footer a{color:var(--accent)}
 
 <script>
 const SHIFTS = {
-  Upstream:{q:"What goal is this question serving, and is there a better route to it?",p:"What are you ultimately trying to achieve with the answer?"},
-  Premise:{q:"What must be true for this question to make sense?",p:"What are you assuming is true that you have not checked?"},
-  Scope:{q:"Is this too narrow, or too broad, to act on?",p:"Is this the right size? What would a smaller or larger version be?"},
-  Owner:{q:"Whose question is this, and are they the one asking?",p:"Who actually owns this decision, and would they ask it the same way?"},
-  Timing:{q:"Why now, and what changes if it waits?",p:"Where does the urgency come from, and what would waiting cost?"},
-  Measure:{q:"What would count as a good answer, and who decides?",p:"How will you know the answer worked?"},
-  Inversion:{q:"What should we stop, or what would make the opposite true?",p:"What would you stop doing, or what if the opposite were true?"}
+  Upstream:{q:"What goal is this question serving, and is there a better route to it?",s:"What I'm ultimately after is ...",e:"higher profitability"},
+  Premise:{q:"What must be true for this question to make sense?",s:"I'm assuming that ...",e:"margins have room to move"},
+  Scope:{q:"Is this too narrow, or too broad, to act on?",s:"A version we could act on this month is ...",e:"the margin on our two weakest product lines"},
+  Owner:{q:"Whose question is this, and are they the one asking?",s:"The person who really owns this is ...",e:"the CFO"},
+  Timing:{q:"Why now, and what changes if it waits?",s:"The urgency comes from ...",e:"the board meeting in November"},
+  Measure:{q:"What would count as a good answer, and who decides?",s:"I'll know it worked when ...",e:"gross margin is up two points by Q2"},
+  Inversion:{q:"What should we stop, or what would make the opposite true?",s:"Something we could stop doing is ...",e:"discounting to hit quarter-end targets"}
 };
 
 const EXAMPLES = [
@@ -299,30 +316,110 @@ render(EXAMPLES[0], "#exOut");
 $("#shiftCards").innerHTML = Object.entries(SHIFTS).map(([k,v]) => `<div class="card"><h3>${k}</h3><p>${esc(v.q)}</p></div>`).join("");
 
 /* Guided */
-$("#gSteps").innerHTML = Object.entries(SHIFTS).map(([k,v]) => `<div class="guided-step"><span class="sh">${k}</span><label class="sq" for="g-${k}">${esc(v.p)}</label><input type="text" id="g-${k}" data-shift="${k}"></div>`).join("");
+$("#gSteps").innerHTML = Object.entries(SHIFTS).map(([k,v]) => `<div class="guided-step"><span class="sh">${k}</span><label class="sq" for="g-${k}">${esc(v.s)}</label><p class="help">${esc(v.q)}</p><input type="text" id="g-${k}" data-shift="${k}" placeholder="${esc("For example: " + v.e)}"></div>`).join("");
+
+const TEMPLATES = {
+  Upstream: n => `Is this question the best route to ${n}?`,
+  Premise: n => `How do we know that ${n}? What would we see if it were not true?`,
+  Scope: n => `Could we start with ${n} instead?`,
+  Owner: n => `How would ${n} ask this question?`,
+  Timing: n => `Is ${n} a real deadline, and what would waiting cost?`,
+  Measure: n => `What would we have to do so that ${n}?`,
+  Inversion: n => `What happens if we stop ${n}?`
+};
+/* Leading words people often type that the template already supplies */
+const LEADS = {
+  Upstream: [/^what i'?m ultimately after is\s*/i, /^i'?m (ultimately )?(trying to|after)\s*/i, /^(to )?(achieve|get)\s+/i],
+  Premise: [/^i'?m assuming( that)?\s*/i, /^i am assuming( that)?\s*/i, /^that\s+/i],
+  Scope: [/^a version we could act on this month is\s*/i],
+  Owner: [/^the person who really owns this is\s*/i],
+  Timing: [/^the urgency comes from\s*/i],
+  Measure: [/^i'?ll know it worked when\s*/i],
+  Inversion: [/^something we could stop doing is\s*/i, /^stop(ping)?\s+/i, /^we (could )?stop\s+/i]
+};
+function clean(shift, raw){
+  let n = raw.trim().replace(/[’]/g,"'").replace(/[.?!,;:]+$/,"").trim();
+  (LEADS[shift]||[]).forEach(re => { n = n.replace(re, ""); });
+  n = n.trim();
+  /* Lowercase the first letter unless it looks like a name or acronym (CFO, Q2, I) */
+  if(n && /^[A-Z][a-z]/.test(n) && !/^I\b/.test(n)) n = n[0].toLowerCase() + n.slice(1);
+  return n;
+}
+const MAX_SHORTLIST = 3;
+/* Fewest words an answer needs before it can be turned into a question */
+const MIN_WORDS = {Upstream:2, Owner:1, Timing:2};
+
 $("#gGo").addEventListener("click", () => {
   const q = $("#gq").value.trim();
   if(!q){ $("#gq").focus(); return; }
   const filled = [...document.querySelectorAll("#gSteps input")].filter(i => i.value.trim()).map(i => ({shift:i.dataset.shift, note:i.value.trim()}));
-  if(!filled.length){ $("#gOut").innerHTML = `<p class="err">Answer at least one shift to build a reframe.</p>`; return; }
-  const templates = {
-    Upstream: n => `What is the best route to ${n}?`,
-    Premise: n => `Is it actually true that ${n}? What would we see if it were not?`,
-    Scope: n => `${n}: what is the version of this we could act on this month?`,
-    Owner: n => `How would ${n} frame this decision?`,
-    Timing: n => `What changes if we decide this later, given that ${n}?`,
-    Measure: n => `What would make us confident that ${n}?`,
-    Inversion: n => `What happens if we ${n}?`
-  };
-  const reframes = filled.slice(0,3).map(f => ({shift:f.shift, question:templates[f.shift](f.note.replace(/[.?!]+$/,"")), changes:`Your ${f.shift.toLowerCase()} answer: "${f.note}". Edit the wording until it is a question you would actually ask.`}));
-  render({
-    restated:q,
-    decision:{what:"Name the decision this question serves before you ask it.", owner:"You decide"},
-    premises:[],
-    reframes,
-    first:{question:reframes[0].question, why:filled.length > 3 ? "You answered more than three shifts; the first three are shown. Reorder by filling the most important first." : "Your first answered shift leads. Compare it against the original before you ask either."}
-  }, "#gOut");
+  if(!filled.length){ $("#gOut").innerHTML = `<p class="err">Finish at least one sentence to build a reframe.</p>`; return; }
+  const decision = $("#g-decision").value.trim().replace(/[.]+$/,"");
+  const ownerEntry = filled.find(f => f.shift === "Owner");
+  const owner = ownerEntry ? ownerEntry.note.trim().replace(/^the person who really owns this is\s*/i,"").replace(/[.?!]+$/,"") : "";
+  const reframes = filled.map(f => {
+    const n = clean(f.shift, f.note);
+    const words = n.split(/\s+/).filter(Boolean).length;
+    const short = words < (MIN_WORDS[f.shift] || 3);
+    return {shift:f.shift, note:f.note, question: short ? "" : TEMPLATES[f.shift](n), short};
+  });
+  renderGuided({q, decision, owner, reframes});
 });
+
+function renderGuided(r){
+  const el = $("#gOut");
+  const many = r.reframes.length > MAX_SHORTLIST;
+  const cards = r.reframes.map((f,i) => `<div class="grf" data-i="${i}">
+      <span class="shift" style="justify-self:start;margin:0">${esc(f.shift)}</span>
+      <input type="text" class="rq" aria-label="${esc(f.shift)} reframe" value="${esc(f.question)}" placeholder="Turn this into a question you would actually ask">
+      <p class="note">${f.short ? `Your answer "${esc(f.note.replace(/[.?!]+$/,""))}" was too short to build a question from. Write it as one above.` : `Built from your answer "${esc(f.note.replace(/[.?!]+$/,""))}". Edit the wording until it sounds like you.`}</p>
+      <div class="acts">
+        <button class="btn sm use" type="button">Use this one</button>
+        ${many ? `<label><input type="checkbox" class="sl"> Shortlist</label>` : ""}
+      </div>
+    </div>`).join("");
+  el.innerHTML = `<div class="result">
+    <div class="card"><div class="label">You asked</div><div class="asked">${esc(r.q)}</div></div>
+    ${(r.decision || r.owner) ? `<div class="card decision"><div><div class="label">The decision behind it</div><div>${r.decision ? esc(r.decision) : `<span class="hint">Not named. Naming it often changes which reframe matters.</span>`}</div></div>${r.owner ? `<div class="owner">Owner: ${esc(r.owner)}</div>` : ""}</div>` : ""}
+    <div>
+      <div class="label">Your reframes</div>
+      ${many ? `<p class="hint" style="margin:0 0 10px">You answered ${r.reframes.length} shifts. Shortlist the three that change the question most (<span class="slc">0</span> of ${MAX_SHORTLIST}).</p>` : ""}
+      <div class="reframes">${cards}</div>
+    </div>
+    <div class="card first"><div class="label">The question before the question</div><div class="q chosen"><span class="empty">Not chosen yet. Pick "Use this one" on the reframe you want to ask first.</span></div></div>
+    <div class="row" style="margin-top:0"><button class="btn ghost sm orig" type="button">Answer the original as asked</button></div>
+    <p class="choice" aria-live="polite">Your choice: <strong class="pick">none yet</strong></p>
+  </div>`;
+
+  const setChoice = (text, card) => {
+    el.querySelectorAll(".grf").forEach(x => x.classList.toggle("used", x === card));
+    el.querySelector(".chosen").textContent = text;
+    el.querySelector(".pick").textContent = card ? text : "the original question, as asked";
+  };
+  el.querySelectorAll(".grf").forEach(card => {
+    const input = card.querySelector(".rq");
+    card.querySelector(".use").addEventListener("click", () => {
+      const text = input.value.trim();
+      if(!text){ input.focus(); return; }
+      setChoice(text, card);
+    });
+    /* Keep the chosen question in sync if it is edited after picking */
+    input.addEventListener("input", () => { if(card.classList.contains("used") && input.value.trim()) setChoice(input.value.trim(), card); });
+  });
+  el.querySelector(".orig").addEventListener("click", () => setChoice(r.q, null));
+
+  if(many){
+    const boxes = [...el.querySelectorAll(".sl")];
+    boxes.forEach(b => b.addEventListener("change", () => {
+      const n = boxes.filter(x => x.checked).length;
+      el.querySelector(".slc").textContent = n;
+      boxes.forEach(x => { if(!x.checked) x.disabled = n >= MAX_SHORTLIST; });
+      /* Move shortlisted reframes to the top */
+      const list = el.querySelector(".reframes");
+      boxes.filter(x => x.checked).reverse().forEach(x => list.prepend(x.closest(".grf")));
+    }));
+  }
+}
 
 /* Live */
 let SYSTEM = null;
