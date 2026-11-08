@@ -52,6 +52,10 @@ Each one has an answer that sounds right and walks past the real issue.
 
 Full worked versions are in [examples/](examples/).
 
+## In practice
+
+The first decision in the demo is not invented. At iHeartMedia we had spent close to four years trying to fix search, and the question on the table had narrowed to which engine to choose. The question before it was why results were poor, and the answer was not the engine. It was metadata, content structure, and the fact that nobody owned what a good result meant. Settling that first changed what we did next: we stopped the four-year effort as it stood and treated the structure underneath it as the real work. Search had been absorbing roughly 60 percent of the engineering capacity of the teams involved. After the decision it took about 30, and the difference went to work with a clearer return. Stopping was harder than choosing an engine would have been. Four years of effort had made search an emotional subject, and a reframe asks people to put that effort down. That is why Vorfrage offers rather than blocks. The original question stays on the table, and the asker chooses.
+
 ## How it gets there
 
 Every check returns: the question restated, the answer you would have gotten and what it misses, the decision behind the question and who owns it, the premises it takes as true (rated by how much a useful answer depends on each), three reframes, and the one question to settle first.
@@ -84,6 +88,7 @@ The system prompt used in live mode is published in full at [prompts/vorfrage-sy
 
 - **Custom GPT** (no code): [chatgpt/CUSTOM_GPT.md](chatgpt/CUSTOM_GPT.md) has everything to paste into the GPT builder.
 - **MCP server** (a ChatGPT app and a Claude connector): [mcp-server/](mcp-server/) is a one-tool server that needs no API key. It triages the question and hands the host model the framing to follow.
+- **Claude skill** (no server, no key): [skill/vorfrage/](skill/vorfrage/) is a one-file skill. In Claude Code, copy the `vorfrage` folder into `.claude/skills/` in a project (or `~/.claude/skills/` for every project) and type `/vorfrage` before a question. In the Claude app, add the folder as a custom skill. Once installed, Claude also applies it on its own when a question looks strategic and contains its own solution, and stays quiet otherwise.
 
 ## Why now
 
@@ -96,14 +101,15 @@ The system prompt used in live mode is published in full at [prompts/vorfrage-sy
 index.html                          The demo (GitHub Pages)
 METHOD.md                           The seven shifts, triage and design principles
 prompts/vorfrage-system-prompt.md   The exact prompt used in live mode
-examples/                           The five demo decisions in the JSON output format
+examples/                           Worked decisions in the JSON output format
+skill/vorfrage/                     A Claude skill: the method as a single SKILL.md
 chatgpt/                            Custom GPT configuration and icon
 mcp-server/                         MCP server for ChatGPT apps and Claude connectors
 ```
 
 ## About
 
-Built by [Uta Knablein](https://www.linkedin.com/in/utaknablein), former Chief Product Officer at iHeartMedia and WW. Part of a body of work on what happens to management when machines make execution cheap, alongside [ENGINE](https://github.com/utaknablein/engine-diagnostic), the [Product Operating System](https://github.com/utaknablein/product-operating-system), [Board Devil's Advocate](https://github.com/utaknablein/board-devils-advocate) and [Agent Workflows](https://github.com/utaknablein/agent-workflows).
+Built by [Uta Knablein](https://www.linkedin.com/in/utaknablein), former Chief Product Officer at iHeartMedia and WW. Part of a body of work on what happens to management when machines make execution cheap, alongside [ENGINE](https://github.com/utaknablein/engine-diagnostic), the [Product Operating System](https://github.com/utaknablein/product-operating-system), [Board Devil's Advocate](https://github.com/utaknablein/board-devils-advocate), [Agent Workflows](https://github.com/utaknablein/agent-workflows) and [Subscription Revenue Integrity](https://github.com/utaknablein/subscription-revenue-integrity).
 
 To run a *Question Before the Question* session with a leadership team, in English or German, reach out on [LinkedIn](https://www.linkedin.com/in/utaknablein).
 
